@@ -1,0 +1,47 @@
+==============================================================
+  NIRIKSH MODEL TRAINING REPORT
+==============================================================
+
+HEALTH PREDICTION MODELS
+------------------------------------------
+  CompressorHealth:
+    Model (best) : RandomForest
+    RMSE         : 0.014962
+    R²            : 0.960316
+    MAE          : 0.011105
+
+  CombustorHealth:
+    Model (best) : XGBoost
+    RMSE         : 0.013061
+    R²            : 0.806098
+    MAE          : 0.009108
+
+  TurbineHealth:
+    Model (best) : RandomForest
+    RMSE         : 0.023189
+    R²            : 0.766578
+    MAE          : 0.017353
+
+  OverallHealth:
+    Model (best) : RandomForest
+    RMSE         : 0.009309
+    R²            : 0.967259
+    MAE          : 0.006677
+
+PERFORMANCE PREDICTION MODELS
+------------------------------------------
+  Thrust_N:
+    Model (best) : LightGBM
+    RMSE         : 2640.548504
+    R²            : 0.972089
+    MAE          : 2141.612007
+
+  TSFC_g_N_s:
+    Model (best) : XGBoost
+    RMSE         : 0.000776
+    R²            : 0.985544
+    MAE          : 0.000627
+
+Total features used  : 26
+Models saved to      : C:\Users\Raunak\OneDrive\Desktop\digital twin draft model\niriksh\models\saved
+==============================================================

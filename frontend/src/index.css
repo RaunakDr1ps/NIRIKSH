@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface-900 text-gray-100;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-500 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-hud-blue/50;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface-800/60 backdrop-blur-md border border-surface-600/50 rounded-xl;
+  }
+
+  .glass-panel-hover {
+    @apply glass-panel transition-all duration-300 hover:border-hud-blue/30 hover:shadow-lg hover:shadow-hud-blue/5;
+  }
+
+  .hud-text {
+    @apply font-mono text-hud-blue;
+  }
+
+  .hud-cyan {
+    @apply font-mono text-hud-cyan;
+  }
+
+  .hud-green {
+    @apply font-mono text-hud-green;
+  }
+
+  .hud-amber {
+    @apply font-mono text-hud-amber;
+  }
+
+  .hud-orange {
+    @apply font-mono text-hud-orange;
+  }
+
+  .hud-red {
+    @apply font-mono text-hud-red;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full inline-block;
+  }
+
+  .status-dot-green {
+    @apply status-dot bg-hud-green shadow-[0_0_8px_rgba(0,255,136,0.6)];
+  }
+
+  .status-dot-yellow {
+    @apply status-dot bg-hud-amber shadow-[0_0_8px_rgba(255,179,0,0.6)];
+  }
+
+  .status-dot-orange {
+    @apply status-dot bg-hud-orange shadow-[0_0_8px_rgba(255,106,0,0.6)];
+  }
+
+  .status-dot-red {
+    @apply status-dot bg-hud-red shadow-[0_0_8px_rgba(255,0,64,0.6)];
+  }
+
+  .scan-line {
+    @apply absolute inset-0 overflow-hidden pointer-events-none;
+  }
+
+  .scan-line::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-b from-transparent via-hud-blue/5 to-transparent;
+    animation: scan 2s linear infinite;
+  }
+
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
+  }
+
+  .text-shadow-green {
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+
+  .text-shadow-amber {
+    text-shadow: 0 0 10px rgba(255, 179, 0, 0.5);
+  }
+
+  .text-shadow-red {
+    text-shadow: 0 0 10px rgba(255, 0, 64, 0.5);
+  }
+}
