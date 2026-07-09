@@ -7,11 +7,19 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-export async function uploadDataset(file: File): Promise<{ message: string; rows: number }> {
+export async function uploadDataset(
+  file: File,
+  onProgress?: (progress: number) => void,
+): Promise<{ message: string; rows: number }> {
   const formData = new FormData();
   formData.append('file', file);
   const { data } = await api.post('/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        onProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+      }
+    },
   });
   return data;
 }

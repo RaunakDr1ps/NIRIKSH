@@ -7,6 +7,7 @@ import TrendChart from '@/components/charts/TrendChart';
 import WarningPanel from '@/components/dashboard/WarningPanel';
 import PredictionPanel from '@/components/dashboard/PredictionPanel';
 import ParameterCard from '@/components/dashboard/ParameterCard';
+import UploadButton from '@/components/dashboard/UploadButton';
 import { Activity, Gauge, Thermometer, Wind, Fuel, Compass } from 'lucide-react';
 
 export default function Dashboard() {
@@ -39,6 +40,14 @@ export default function Dashboard() {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      {/* Top Bar */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
+          Engine Overview
+        </h2>
+        <UploadButton />
+      </div>
+
       {/* Top Row: Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard
