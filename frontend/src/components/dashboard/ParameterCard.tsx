@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { formatNumber } from '@/utils/format';
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,13 +24,19 @@ export default function ParameterCard({ label, value, unit, icon: Icon, format: 
       : formatNumber(value, decimals);
 
   return (
-    <div className="glass-panel p-3 hover:border-hud-blue/20 transition-colors">
+    <motion.div
+      className="glass-panel p-3 card-border-glow"
+      whileHover={{ y: -2, borderColor: 'rgba(0, 212, 255, 0.3)' }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    >
       <div className="flex items-center gap-2 mb-1.5">
-        <Icon className="w-3 h-3 text-hud-blue/60" />
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</span>
+        <Icon className="w-3.5 h-3.5 text-hud-blue/60" />
+        <span className="text-[10px] text-gray-500 uppercase tracking-[0.1em]">{label}</span>
       </div>
-      <p className="text-lg font-bold font-mono text-white">{displayValue}</p>
+      <p className="text-lg font-bold font-mono tabular-nums text-white">
+        {displayValue}
+      </p>
       <p className="text-[10px] text-gray-600 font-mono">{unit}</p>
-    </div>
+    </motion.div>
   );
 }

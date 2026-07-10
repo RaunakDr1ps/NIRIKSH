@@ -15,6 +15,23 @@ interface FlowParticle {
   opacity: number;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
+
 export default function EngineView() {
   const { data } = useDashboardContext();
 
@@ -43,15 +60,22 @@ export default function EngineView() {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center gap-3">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex items-center gap-3">
         <Cpu className="w-6 h-6 text-hud-blue" />
-        <h1 className="text-2xl font-bold text-white">Engine Visualization</h1>
-        <span className="text-xs text-gray-600 font-mono self-end mb-1">REAL-TIME SCHEMATIC</span>
-      </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Engine Visualization</h1>
+          <p className="text-[10px] text-gray-600 font-mono">REAL-TIME SCHEMATIC</p>
+        </div>
+      </motion.div>
 
       {/* Main Engine SVG */}
-      <div className="glass-panel p-6 relative overflow-hidden">
+      <motion.div variants={itemVariants} className="glass-panel p-6 relative overflow-hidden">
         <div className="scan-line" />
         <svg viewBox="0 0 100 100" className="w-full" preserveAspectRatio="xMidYMid meet">
           <defs>
@@ -254,11 +278,11 @@ export default function EngineView() {
             />
           ))}
         </svg>
-      </div>
+      </motion.div>
 
       {/* Parameter Grid */}
       {data && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <ParamBox label="T2 (Inlet)" value={formatTemperature(data.telemetry.t2_k)} icon={Thermometer} color="#00d4ff" />
           <ParamBox label="T3 (Comp. Out)" value={formatTemperature(data.telemetry.t3_k)} icon={Thermometer} color="#ffb300" />
           <ParamBox label="T4 (Turb. Inlet)" value={formatTemperature(data.telemetry.t4_k)} icon={Thermometer} color="#ff6a00" />
@@ -267,7 +291,7 @@ export default function EngineView() {
           <ParamBox label="P4 (Turb. Out)" value={formatPressure(data.telemetry.p4_pa)} icon={Wind} color="#ff6a00" />
           <ParamBox label="RPM" value={`${formatNumber(data.telemetry.rpm_rev_min / 1000, 1)}k`} icon={Gauge} color="#00ff88" />
           <ParamBox label="Fuel Flow" value={`${data.telemetry.fuelFlow_kg_s.toFixed(4)} kg/s`} icon={Activity} color="#ffb300" />
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );
@@ -285,14 +309,22 @@ function ParamBox({
   color: string;
 }) {
   return (
-    <div className="glass-panel p-4 flex items-center gap-3">
-      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}15`, border: `1px solid ${color}30` }}>
+    <motion.div
+      className="glass-panel p-4 flex items-center gap-3"
+      whileHover={{ y: -2, borderColor: `${color}50` }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    >
+      <motion.div
+        className="w-10 h-10 rounded-lg flex items-center justify-center"
+        style={{ backgroundColor: `${color}15`, border: `1px solid ${color}30` }}
+        whileHover={{ scale: 1.05 }}
+      >
         <Icon className="w-5 h-5" style={{ color }} />
-      </div>
+      </motion.div>
       <div>
         <p className="text-[10px] text-gray-500 uppercase tracking-wider font-mono">{label}</p>
-        <p className="text-sm font-mono font-bold mt-0.5" style={{ color }}>{value}</p>
+        <p className="text-sm font-mono font-bold mt-0.5 tabular-nums" style={{ color }}>{value}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }

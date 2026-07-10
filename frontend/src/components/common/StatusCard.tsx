@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { getHealthStatus, formatPercentage } from '@/utils/format';
+import { getHealthStatus } from '@/utils/format';
 import type { HealthStatus } from '@/types/engine';
+import AnimatedCounter from './AnimatedCounter';
 
 interface StatusCardProps {
   title: string;
@@ -11,41 +12,43 @@ interface StatusCardProps {
 }
 
 export default function StatusCard({ title, value, status, large }: StatusCardProps) {
-  const { label, dotClass } = getHealthStatus(value);
+  const { label, dotClass, color } = getHealthStatus(value);
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.015, y: -2 }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className={`glass-panel-hover p-4 ${large ? 'ring-1 ring-hud-blue/20' : ''}`}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">{title}</span>
+        <span className="text-[11px] text-gray-400 uppercase tracking-[0.15em] font-medium">{title}</span>
         <span className={dotClass} />
       </div>
-      <div className={`font-mono font-bold ${large ? 'text-4xl' : 'text-2xl'}`} style={{ color: getHealthStatus(value).color }}>
-        {formatPercentage(value)}
+      <div className={`font-mono font-bold ${large ? 'text-4xl' : 'text-2xl'} tabular-nums`} style={{ color }}>
+        <AnimatedCounter value={value * 100} decimals={1} suffix="%" />
       </div>
       <div className="flex items-center justify-between mt-2">
-        <span className="text-xs font-mono" style={{ color: getHealthStatus(value).color }}>
+        <span className="text-[11px] font-mono tracking-wider" style={{ color }}>
           {label}
         </span>
         {status === 'critical' && (
           <motion.span
             animate={{ opacity: [1, 0.3, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-[10px] text-hud-red font-mono"
+            className="text-[10px] text-hud-red font-mono font-semibold"
           >
             CRITICAL
           </motion.span>
         )}
       </div>
-      <div className="mt-3 h-1.5 bg-surface-700 rounded-full overflow-hidden">
+      <div className="mt-3 h-1.5 bg-surface-700/80 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value * 100}%` }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-          className="h-full rounded-full transition-colors duration-500"
-          style={{ backgroundColor: getHealthStatus(value).color, boxShadow: `0 0 8px ${getHealthStatus(value).color}40` }}
+          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+          className="h-full rounded-full"
+          style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}40` }}
         />
       </div>
     </motion.div>

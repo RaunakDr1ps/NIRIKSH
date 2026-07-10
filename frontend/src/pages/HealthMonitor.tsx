@@ -3,41 +3,65 @@ import { Activity, AlertTriangle, TrendingDown } from 'lucide-react';
 import { useDashboardContext } from '@/context/DashboardContext';
 import StatusCard from '@/components/common/StatusCard';
 import TrendChart from '@/components/charts/TrendChart';
+import LoadingSkeleton from '@/components/common/LoadingSkeleton';
 import { getHealthStatus } from '@/utils/format';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
 
 export default function HealthMonitor() {
   const { data, loading } = useDashboardContext();
 
   if (loading && !data) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-10 h-10 border-2 border-hud-blue border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingSkeleton type="page" />;
   }
 
   if (!data) return null;
 
   const { health, degradationTrends } = data;
 
+  const healthValue = (v: number) =>
+    v >= 0.8 ? 'healthy' : v >= 0.6 ? 'attention' : v >= 0.4 ? 'warning' : 'critical';
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center gap-3">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex items-center gap-3">
         <Activity className="w-6 h-6 text-hud-blue" />
-        <h1 className="text-2xl font-bold text-white">Health Monitor</h1>
-        <span className="text-xs text-gray-600 font-mono self-end mb-1">DEGRADATION TRACKING</span>
-      </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Health Monitor</h1>
+          <p className="text-[10px] text-gray-600 font-mono">DEGRADATION TRACKING</p>
+        </div>
+      </motion.div>
 
       {/* Health Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatusCard title="Compressor" value={health.compressorHealth} type="health" status={health.compressorHealth >= 0.8 ? 'healthy' : health.compressorHealth >= 0.6 ? 'attention' : health.compressorHealth >= 0.4 ? 'warning' : 'critical'} />
-        <StatusCard title="Combustor" value={health.combustorHealth} type="health" status={health.combustorHealth >= 0.8 ? 'healthy' : health.combustorHealth >= 0.6 ? 'attention' : health.combustorHealth >= 0.4 ? 'warning' : 'critical'} />
-        <StatusCard title="Turbine" value={health.turbineHealth} type="health" status={health.turbineHealth >= 0.8 ? 'healthy' : health.turbineHealth >= 0.6 ? 'attention' : health.turbineHealth >= 0.4 ? 'warning' : 'critical'} />
-        <StatusCard title="Overall Health" value={health.overallHealth} type="health" status={health.overallHealth >= 0.8 ? 'healthy' : health.overallHealth >= 0.6 ? 'attention' : health.overallHealth >= 0.4 ? 'warning' : 'critical'} large />
-      </div>
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatusCard title="Compressor" value={health.compressorHealth} type="health" status={healthValue(health.compressorHealth)} />
+        <StatusCard title="Combustor" value={health.combustorHealth} type="health" status={healthValue(health.combustorHealth)} />
+        <StatusCard title="Turbine" value={health.turbineHealth} type="health" status={healthValue(health.turbineHealth)} />
+        <StatusCard title="Overall Health" value={health.overallHealth} type="health" status={healthValue(health.overallHealth)} large />
+      </motion.div>
 
       {/* Degradation Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <TrendChart
             data={degradationTrends}
@@ -81,7 +105,7 @@ export default function HealthMonitor() {
             ]}
           />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -100,17 +124,21 @@ function HealthSummaryCard({
   const { label, color } = getHealthStatus(value);
 
   return (
-    <div className="glass-panel p-4">
+    <motion.div
+      className="glass-panel p-4 card-border-glow"
+      whileHover={{ y: -2 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    >
       <div className="flex items-center gap-2 mb-3">
         <Icon className="w-4 h-4" style={{ color }} />
         <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{title}</span>
         <span className="ml-auto text-[10px] font-mono" style={{ color }}>{label}</span>
       </div>
-      <div className="h-2 bg-surface-700 rounded-full mb-3 overflow-hidden">
+      <div className="h-2 bg-surface-700/80 rounded-full mb-3 overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value * 100}%` }}
-          transition={{ duration: 1, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
           className="h-full rounded-full"
           style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}40` }}
         />
@@ -119,10 +147,10 @@ function HealthSummaryCard({
         {details.map((d) => (
           <div key={d.label} className="flex justify-between text-xs">
             <span className="text-gray-500">{d.label}</span>
-            <span className="text-gray-300 font-mono">{d.value}</span>
+            <span className="text-gray-300 font-mono tabular-nums">{d.value}</span>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

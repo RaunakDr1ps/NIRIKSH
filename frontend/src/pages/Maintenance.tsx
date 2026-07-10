@@ -2,6 +2,23 @@ import { motion } from 'framer-motion';
 import { Wrench, Calendar, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { useDashboardContext } from '@/context/DashboardContext';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
+
 export default function Maintenance() {
   const { data } = useDashboardContext();
 
@@ -32,26 +49,39 @@ export default function Maintenance() {
   const statusColor = overallHealth >= 0.8 ? '#00ff88' : overallHealth >= 0.6 ? '#ffb300' : overallHealth >= 0.4 ? '#ff6a00' : '#ff0040';
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center gap-3">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex items-center gap-3">
         <Wrench className="w-6 h-6 text-hud-blue" />
-        <h1 className="text-2xl font-bold text-white">Maintenance</h1>
-        <span className="text-xs text-gray-600 font-mono self-end mb-1">PREDICTIVE MAINTENANCE</span>
-      </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Maintenance</h1>
+          <p className="text-[10px] text-gray-600 font-mono">PREDICTIVE MAINTENANCE</p>
+        </div>
+      </motion.div>
 
       {/* Health Status */}
-      <div className="glass-panel p-6">
+      <motion.div variants={itemVariants} className="glass-panel p-6 card-border-glow">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Engine Health Overview</h3>
-          <span className="text-[10px] font-mono" style={{ color: statusColor }}>
+          <motion.span
+            className="text-[10px] font-mono font-semibold"
+            style={{ color: statusColor }}
+            key={overallHealth >= 0.8 ? 'healthy' : overallHealth >= 0.6 ? 'attention' : overallHealth >= 0.4 ? 'warning' : 'critical'}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             {overallHealth >= 0.8 ? 'HEALTHY' : overallHealth >= 0.6 ? 'ATTENTION' : overallHealth >= 0.4 ? 'WARNING' : 'CRITICAL'}
-          </span>
+          </motion.span>
         </div>
-        <div className="h-3 bg-surface-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-surface-700/80 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${overallHealth * 100}%` }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
+            transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
             className="h-full rounded-full"
             style={{ backgroundColor: statusColor, boxShadow: `0 0 12px ${statusColor}60` }}
           />
@@ -61,10 +91,10 @@ export default function Maintenance() {
           <span className="text-gray-600">50%</span>
           <span className="text-gray-600">100%</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Recommendations */}
-      <div className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest flex items-center gap-2">
           <Calendar className="w-4 h-4 text-hud-blue" />
           Maintenance Recommendations
@@ -74,13 +104,15 @@ export default function Maintenance() {
             key={rec.component}
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className={`glass-panel p-4 border-l-2 ${
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+            className={`glass-panel p-4 border-l-2 card-border-glow ${
               rec.priority === 'critical'
                 ? 'border-l-hud-red'
                 : rec.priority === 'high'
                 ? 'border-l-hud-orange'
                 : 'border-l-hud-green'
             }`}
+            whileHover={{ x: 4 }}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3">
@@ -97,7 +129,7 @@ export default function Maintenance() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs font-mono" style={{ color: rec.priority === 'critical' ? '#ff0040' : rec.priority === 'high' ? '#ff6a00' : '#00ff88' }}>
+                <p className="text-xs font-mono font-semibold" style={{ color: rec.priority === 'critical' ? '#ff0040' : rec.priority === 'high' ? '#ff6a00' : '#00ff88' }}>
                   {rec.priority.toUpperCase()}
                 </p>
                 <p className="text-[10px] text-gray-500 font-mono mt-0.5">Due: {rec.due}</p>
@@ -105,7 +137,7 @@ export default function Maintenance() {
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
