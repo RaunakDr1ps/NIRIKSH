@@ -79,19 +79,23 @@ export default function TrendChart({ data, title, lines }: TrendChartProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#0f1524',
-                border: '1px solid #1a2540',
+                backgroundColor: 'rgba(15, 21, 36, 0.96)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(26, 37, 64, 0.8)',
                 borderRadius: '8px',
                 fontSize: '12px',
                 fontFamily: 'JetBrains Mono, monospace',
+                padding: '12px 16px',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
               }}
-              labelStyle={{ color: '#9ca3af' }}
+              labelStyle={{ color: '#9ca3af', marginBottom: '6px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}
               formatter={(value: number) => [`${(value * 100).toFixed(1)}%`]}
             />
             <Legend
-              wrapperStyle={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace' }}
+              wrapperStyle={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', paddingTop: '4px' }}
               iconType="circle"
               iconSize={6}
+              onMouseEnter={() => {}}
             />
             {lines.map((line, i) => (
               <Line

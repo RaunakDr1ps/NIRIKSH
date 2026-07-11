@@ -64,24 +64,31 @@ export default function Header() {
         </div>
 
         <motion.button
-          className="relative p-2 rounded-lg hover:bg-surface-700 transition-colors"
+          className="relative p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          aria-label="Notifications"
         >
           <Bell className="w-4 h-4 text-gray-400" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-hud-orange rounded-full" />
+          <motion.span
+            className="absolute top-1 right-1 w-2 h-2 bg-hud-orange rounded-full"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
         </motion.button>
         <motion.button
-          className="p-2 rounded-lg hover:bg-surface-700 transition-colors"
+          className="p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          aria-label="Download data"
         >
           <Download className="w-4 h-4 text-gray-400" />
         </motion.button>
         <motion.button
-          className="p-2 rounded-lg hover:bg-surface-700 transition-colors"
+          className="p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          aria-label="Settings"
         >
           <Settings className="w-4 h-4 text-gray-400" />
         </motion.button>

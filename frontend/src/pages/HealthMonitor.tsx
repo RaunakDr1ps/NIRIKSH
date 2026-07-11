@@ -10,7 +10,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
   },
 };
 
@@ -19,7 +19,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
@@ -77,6 +77,10 @@ export default function HealthMonitor() {
 
         {/* Health Summary */}
         <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-0.5 h-3 bg-hud-blue/60 rounded-full" />
+            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Component Details</span>
+          </div>
           <HealthSummaryCard
             title="Compressor Status"
             value={health.compressorHealth}

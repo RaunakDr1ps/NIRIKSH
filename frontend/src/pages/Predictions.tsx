@@ -8,7 +8,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
   },
 };
 
@@ -17,7 +17,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
@@ -160,7 +160,7 @@ function InfoItem({
 }) {
   return (
     <motion.div
-      className="glass-panel p-3"
+      className="glass-panel p-3 card-border-glow"
       whileHover={{ y: -1, borderColor: 'rgba(0, 212, 255, 0.2)' }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >

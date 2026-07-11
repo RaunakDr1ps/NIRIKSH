@@ -55,7 +55,7 @@ export default function UploadButton() {
         disabled={uploading}
         whileHover={uploading ? undefined : { scale: 1.02, borderColor: 'rgba(0, 212, 255, 0.6)' }}
         whileTap={uploading ? undefined : { scale: 0.98 }}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-hud-blue bg-surface-800/80 border border-hud-blue/30 rounded-lg hover:bg-hud-blue/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-hud-blue bg-surface-800/80 border border-hud-blue/30 rounded-lg hover:bg-hud-blue/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
       >
         {uploading ? (
           <>

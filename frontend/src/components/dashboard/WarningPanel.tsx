@@ -83,12 +83,28 @@ export default function WarningPanel({ warnings }: WarningPanelProps) {
                         : 'text-hud-blue'
                     }`}
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-300 truncate">{w.message}</p>
-                    <p className="text-[10px] text-gray-500 font-mono">{w.component}</p>
-                  </div>
-                </motion.div>
-              );
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <motion.span
+                    className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                      w.type === 'critical' ? 'bg-hud-red' : w.type === 'warning' ? 'bg-hud-amber' : 'bg-hud-blue'
+                    }`}
+                    animate={w.type === 'critical' ? { scale: [1, 1.3, 1] } : {}}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    style={{
+                      boxShadow: w.type === 'critical'
+                        ? '0 0 6px rgba(255, 0, 64, 0.6)'
+                        : w.type === 'warning'
+                        ? '0 0 6px rgba(255, 179, 0, 0.4)'
+                        : '0 0 6px rgba(0, 212, 255, 0.4)',
+                    }}
+                  />
+                  <p className="text-xs font-medium text-gray-300 truncate">{w.message}</p>
+                </div>
+                <p className="text-[10px] text-gray-600 font-mono ml-[10px]">{w.component}</p>
+              </div>
+            </motion.div>
+          );
             })
           )}
         </AnimatePresence>

@@ -16,7 +16,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,
+      staggerChildren: 0.04,
       delayChildren: 0.1,
     },
   },
@@ -27,7 +27,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
@@ -118,11 +118,13 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Parameters Grid */}
-      <motion.div variants={itemVariants} className="glass-panel p-4">
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-hud-blue" />
-          Live Engine Parameters
-        </h3>
+      <motion.div variants={itemVariants} className="glass-panel p-4 card-border-glow">
+        <div className="flex items-center gap-3 mb-4 pb-3 border-b border-surface-600/30">
+          <div className="w-0.5 h-4 bg-hud-blue rounded-full" />
+          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-widest">
+            Live Engine Parameters
+          </h3>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {params.map((p) => (
             <ParameterCard key={p.label} {...p} />

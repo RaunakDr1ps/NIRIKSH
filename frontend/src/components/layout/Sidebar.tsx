@@ -37,30 +37,43 @@ export default function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
-                isActive
-                  ? 'bg-hud-blue/10 text-hud-blue border border-hud-blue/20 shadow-[0_0_10px_rgba(0,212,255,0.05)]'
-                  : 'text-gray-400 hover:bg-surface-800 hover:text-gray-200 border border-transparent'
-              }`
-            }
+            title={collapsed ? item.label : undefined}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group border border-transparent relative"
           >
-            <motion.div layout className="flex items-center gap-3 overflow-hidden">
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="text-sm font-medium whitespace-nowrap"
-                  >
-                    {item.label}
-                  </motion.span>
+            {({ isActive }: { isActive: boolean }) => (
+              <motion.div layout className="flex items-center gap-3 overflow-hidden w-full">
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active"
+                    className="absolute -left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-hud-blue rounded-full"
+                    style={{ boxShadow: '0 0 6px rgba(0,212,255,0.4)' }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  />
                 )}
-              </AnimatePresence>
-            </motion.div>
+                <div
+                  className={`flex items-center gap-3 w-full px-3 py-2.5 -mx-3 -my-2.5 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? 'bg-hud-blue/10 text-hud-blue shadow-[0_0_10px_rgba(0,212,255,0.05)] border border-hud-blue/20'
+                      : 'text-gray-400 hover:bg-surface-800 hover:text-gray-200'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <AnimatePresence>
+                    {!collapsed && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="text-sm font-medium whitespace-nowrap"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
           </NavLink>
         ))}
       </div>

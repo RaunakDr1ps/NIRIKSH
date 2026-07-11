@@ -6,7 +6,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
   },
 };
 
@@ -15,7 +15,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
@@ -66,7 +66,10 @@ export default function Maintenance() {
       {/* Health Status */}
       <motion.div variants={itemVariants} className="glass-panel p-6 card-border-glow">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Engine Health Overview</h3>
+          <div className="flex items-center gap-3">
+            <div className="w-0.5 h-4 rounded-full" style={{ backgroundColor: statusColor, boxShadow: `0 0 6px ${statusColor}60` }} />
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-widest">Engine Health Overview</h3>
+          </div>
           <motion.span
             className="text-[10px] font-mono font-semibold"
             style={{ color: statusColor }}

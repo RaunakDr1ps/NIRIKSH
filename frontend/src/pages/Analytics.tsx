@@ -16,7 +16,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
   },
 };
 
@@ -25,7 +25,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
   },
 };
 
@@ -99,22 +99,32 @@ export default function Analytics() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08, duration: 0.4 }}
-            className="glass-panel p-4 card-border-glow"
+            className="glass-panel p-4 card-border-glow relative overflow-hidden"
             whileHover={{ y: -2 }}
           >
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">{m.label}</p>
-            <p className="text-2xl font-bold font-mono tabular-nums text-white">{m.value}</p>
-            <div className="flex items-center gap-1 mt-1.5">
-              {m.change > 0 ? (
-                <TrendingUp className="w-3 h-3 text-hud-green" />
-              ) : m.change < 0 ? (
-                <TrendingDown className="w-3 h-3 text-hud-red" />
-              ) : (
-                <Minus className="w-3 h-3 text-gray-500" />
-              )}
-              <span className={`text-[10px] font-mono tabular-nums ${m.change > 0 ? 'text-hud-green' : m.change < 0 ? 'text-hud-red' : 'text-gray-500'}`}>
-                {m.change > 0 ? '+' : ''}{m.change.toFixed(1)}{m.unit}
-              </span>
+            {/* Accent bar */}
+            <div
+              className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
+              style={{
+                backgroundColor: m.change > 0 ? '#00ff88' : m.change < 0 ? '#ff0040' : '#4a5568',
+                boxShadow: m.change !== 0 ? `0 0 6px ${m.change > 0 ? 'rgba(0,255,136,0.4)' : 'rgba(255,0,64,0.4)'}` : 'none',
+              }}
+            />
+            <div className="pl-3">
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">{m.label}</p>
+              <p className="text-2xl font-bold font-mono tabular-nums text-white">{m.value}</p>
+              <div className="flex items-center gap-1 mt-1.5">
+                {m.change > 0 ? (
+                  <TrendingUp className="w-3 h-3 text-hud-green" />
+                ) : m.change < 0 ? (
+                  <TrendingDown className="w-3 h-3 text-hud-red" />
+                ) : (
+                  <Minus className="w-3 h-3 text-gray-500" />
+                )}
+                <span className={`text-[10px] font-mono tabular-nums ${m.change > 0 ? 'text-hud-green' : m.change < 0 ? 'text-hud-red' : 'text-gray-500'}`}>
+                  {m.change > 0 ? '+' : ''}{m.change.toFixed(1)}{m.unit}
+                </span>
+              </div>
             </div>
           </motion.div>
         ))}
