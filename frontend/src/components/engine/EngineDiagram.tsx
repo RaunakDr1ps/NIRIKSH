@@ -39,15 +39,25 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
     [health],
   );
 
+  const isCombustorCritical = health.combustorHealth < 0.4;
+
   return (
-    <div className="glass-panel p-4 h-full">
+    <motion.div
+      className="glass-panel p-4 h-full card-border-glow"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <div className="flex items-center gap-2 mb-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-hud-blue shadow-[0_0_6px_rgba(0,212,255,0.6)]" />
+        <motion.span
+          className="w-1.5 h-1.5 rounded-full bg-hud-blue flex-shrink-0"
+          style={{ boxShadow: '0 0 6px rgba(0,212,255,0.6)' }}
+          animate={{ opacity: [1, 0.5, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Engine Schematic</h3>
       </div>
 
       <div className="relative">
-        {/* Engine Housing */}
         <svg viewBox="0 0 100 30" className="w-full" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="engineGrad" x1="0" y1="0" x2="1" y2="0">
@@ -57,7 +67,7 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
             </linearGradient>
             {sections.map((s) => (
               <filter key={`glow-${s.id}`} id={`glow-${s.id}`}>
-                <feGaussianBlur stdDeviation="1" result="blur" />
+                <feGaussianBlur stdDeviation={s.id === 'combustor' ? '2' : '1'} result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
                   <feMergeNode in="SourceGraphic" />
@@ -83,7 +93,7 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
                   style={{ filter: `url(#glow-${s.id})` }}
                 />
               ) : (
-                <rect
+                <motion.rect
                   x={s.x}
                   y="9"
                   width={s.width}
@@ -93,9 +103,17 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
                   stroke={s.color}
                   strokeWidth="0.5"
                   style={{ filter: `url(#glow-${s.id})` }}
+                  animate={{
+                    strokeOpacity: s.healthValue < 0.6 ? [0.6, 1, 0.6] : 1,
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: s.healthValue < 0.6 ? Infinity : 0,
+                    ease: 'easeInOut',
+                  }}
                 />
               )}
-              {/* Temperature gradient inside combustor */}
+              {/* Combustor flame */}
               {s.id === 'combustor' && (
                 <>
                   <rect x={s.x + 2} y="11" width={s.width - 4} height="8" rx="2" fill="#ff6a0020" />
@@ -106,8 +124,22 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
                     height="6"
                     rx="1.5"
                     fill="#ff004030"
-                    animate={{ opacity: [0.3, 0.8, 0.3] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    animate={{
+                      opacity: isCombustorCritical ? [0.4, 1, 0.4] : [0.3, 0.8, 0.3],
+                      scaleY: isCombustorCritical ? [1, 0.7, 1] : [1, 1, 1],
+                    }}
+                    transition={{ duration: isCombustorCritical ? 0.8 : 2, repeat: Infinity }}
+                  />
+                  {/* Flame core */}
+                  <motion.ellipse
+                    cx={s.x + s.width / 2}
+                    cy={15}
+                    rx={3}
+                    ry={2}
+                    fill="#ffb300"
+                    opacity={0.15}
+                    animate={{ opacity: [0.1, 0.25, 0.1], rx: [3, 4, 3] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                   />
                 </>
               )}
@@ -116,45 +148,48 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
         })}
 
           {/* Center line */}
-          <line x1="0" y1="15" x2="100" y2="15" stroke="#1a2540" strokeWidth="0.3" />
+          <line x1="0" y1="15" x2="100" y2="15" stroke="#1a2540" strokeWidth="0.3" strokeDasharray="1,2" />
 
           {/* Airflow particles */}
-          {[8, 25, 35, 50, 65, 78, 90].map((x, i) => (
+          {[8, 22, 30, 38, 50, 60, 70, 78, 90].map((x, i) => (
             <motion.circle
               key={`flow-${i}`}
               cx={x}
               cy={15}
-              r="0.8"
-              fill={i < 2 ? INTRAKE_COLOR : i > 5 ? EXHAUST_COLOR : '#ffb300'}
-              opacity={0.8}
+              r={0.6 + (i % 3) * 0.3}
+              fill={i < 2 ? INTRAKE_COLOR : i > 6 ? EXHAUST_COLOR : '#ffb300'}
+              opacity={0.7}
               animate={{
-                cx: [x, x + 3, x + 6, x + 3, x],
-                opacity: [0.8, 1, 0.3, 1, 0.8],
+                cx: [x, x + 2, x + 5, x + 2, x],
+                opacity: [0.7, 1, 0.2, 1, 0.7],
               }}
               transition={{
-                duration: 2 + i * 0.2,
+                duration: 1.8 + i * 0.15,
                 repeat: Infinity,
                 ease: 'linear',
+                delay: i * 0.1,
               }}
             />
           ))}
 
           {/* Hot particles in combustor */}
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <motion.circle
               key={`heat-${i}`}
-              cx={45 + i * 2}
-              cy={12 + Math.sin(i)}
-              r="0.6"
-              fill="#ff6a00"
+              cx={44 + i * 2.5}
+              cy={12 + Math.sin(i * 0.8)}
+              r={0.5 + (i % 3) * 0.2}
+              fill={i % 2 === 0 ? '#ff6a00' : '#ffb300'}
               animate={{
-                cy: [12 + Math.sin(i), 10, 14, 12 + Math.sin(i)],
-                opacity: [0.6, 1, 0.3, 0.6],
+                cy: [12 + Math.sin(i * 0.8), 10, 14, 12 + Math.sin(i * 0.8)],
+                opacity: [0.5, 1, 0.2, 0.5],
+                cx: [44 + i * 2.5, 44 + i * 2.5 + 1, 44 + i * 2.5 - 1, 44 + i * 2.5],
               }}
               transition={{
-                duration: 1.2 + i * 0.15,
+                duration: 1 + i * 0.12,
                 repeat: Infinity,
                 ease: 'easeInOut',
+                delay: i * 0.08,
               }}
             />
           ))}
@@ -182,9 +217,11 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
         <div className="flex justify-between mt-2 px-1">
           {sections.map((s) => (
             <div key={s.id} className="text-center" style={{ marginLeft: s.id === 'intake' ? '0' : '-8px', marginRight: s.id === 'exhaust' ? '0' : '-8px' }}>
-              <div
+              <motion.div
                 className="h-0.5 w-full rounded-full mb-1"
-                style={{ backgroundColor: s.color, boxShadow: `0 0 4px ${s.color}60`, opacity: 0.6 }}
+                style={{ backgroundColor: s.color, boxShadow: `0 0 4px ${s.color}60` }}
+                animate={{ opacity: s.healthValue < 0.6 ? [0.4, 1, 0.4] : 0.6 }}
+                transition={{ duration: 2, repeat: s.healthValue < 0.6 ? Infinity : 0 }}
               />
               <span className="text-[8px] font-mono font-semibold tracking-wider" style={{ color: s.color }}>
                 {s.label}
@@ -198,6 +235,6 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

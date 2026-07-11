@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useDashboardContext } from '@/context/DashboardContext';
 import TrendChart from '@/components/charts/TrendChart';
+import LoadingSkeleton from '@/components/common/LoadingSkeleton';
 import { formatNumber } from '@/utils/format';
 
 interface MetricCard {
@@ -11,13 +12,35 @@ interface MetricCard {
   unit: string;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
+
 export default function Analytics() {
   const { data, loading } = useDashboardContext();
 
   if (loading && !data) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-10 h-10 border-2 border-hud-blue border-t-transparent rounded-full animate-spin" />
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 skeleton-pulse rounded" />
+          <div className="h-7 w-32 skeleton-pulse rounded" />
+        </div>
+        <LoadingSkeleton type="card" count={4} />
+        <LoadingSkeleton type="chart" count={2} />
       </div>
     );
   }
@@ -54,43 +77,61 @@ export default function Analytics() {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center gap-3">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex items-center gap-3">
         <BarChart3 className="w-6 h-6 text-hud-blue" />
-        <h1 className="text-2xl font-bold text-white">Analytics</h1>
-        <span className="text-xs text-gray-600 font-mono self-end mb-1">PERFORMANCE METRICS</span>
-      </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Analytics</h1>
+          <p className="text-[10px] text-gray-600 font-mono">PERFORMANCE METRICS</p>
+        </div>
+      </motion.div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {metrics.map((m, i) => (
           <motion.div
             key={m.label}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className="glass-panel p-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.08, duration: 0.4 }}
+            className="glass-panel p-4 card-border-glow relative overflow-hidden"
+            whileHover={{ y: -2 }}
           >
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">{m.label}</p>
-            <p className="text-2xl font-bold font-mono text-white">{m.value}</p>
-            <div className="flex items-center gap-1 mt-1">
-              {m.change > 0 ? (
-                <TrendingUp className="w-3 h-3 text-hud-green" />
-              ) : m.change < 0 ? (
-                <TrendingDown className="w-3 h-3 text-hud-red" />
-              ) : (
-                <Minus className="w-3 h-3 text-gray-500" />
-              )}
-              <span className={`text-[10px] font-mono ${m.change > 0 ? 'text-hud-green' : m.change < 0 ? 'text-hud-red' : 'text-gray-500'}`}>
-                {m.change > 0 ? '+' : ''}{m.change.toFixed(1)}{m.unit}
-              </span>
+            {/* Accent bar */}
+            <div
+              className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
+              style={{
+                backgroundColor: m.change > 0 ? '#00ff88' : m.change < 0 ? '#ff0040' : '#4a5568',
+                boxShadow: m.change !== 0 ? `0 0 6px ${m.change > 0 ? 'rgba(0,255,136,0.4)' : 'rgba(255,0,64,0.4)'}` : 'none',
+              }}
+            />
+            <div className="pl-3">
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">{m.label}</p>
+              <p className="text-2xl font-bold font-mono tabular-nums text-white">{m.value}</p>
+              <div className="flex items-center gap-1 mt-1.5">
+                {m.change > 0 ? (
+                  <TrendingUp className="w-3 h-3 text-hud-green" />
+                ) : m.change < 0 ? (
+                  <TrendingDown className="w-3 h-3 text-hud-red" />
+                ) : (
+                  <Minus className="w-3 h-3 text-gray-500" />
+                )}
+                <span className={`text-[10px] font-mono tabular-nums ${m.change > 0 ? 'text-hud-green' : m.change < 0 ? 'text-hud-red' : 'text-gray-500'}`}>
+                  {m.change > 0 ? '+' : ''}{m.change.toFixed(1)}{m.unit}
+                </span>
+              </div>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TrendChart
           data={degradationTrends}
           title="Degradation Trends"
@@ -108,7 +149,7 @@ export default function Analytics() {
             { dataKey: 'overallHealth', color: '#00ff88', name: 'Overall Health' },
           ]}
         />
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
