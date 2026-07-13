@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { formatNumber } from '@/utils/format';
+import AnimatedCounter from '@/components/common/AnimatedCounter';
 
 interface HealthGaugeProps {
   label: string;
@@ -34,11 +34,6 @@ export default function HealthGauge({ label, value, max, unit, type }: HealthGau
 
   const circumference = 2 * Math.PI * 42;
   const offset = circumference * (1 - percentage / 100);
-
-  const animatedValue =
-    type === 'rul'
-      ? Math.round(value)
-      : formatNumber(value, type === 'thrust' ? 0 : 1);
 
   const ticks = [0, 20, 40, 60, 80, 100];
 
@@ -105,16 +100,13 @@ export default function HealthGauge({ label, value, max, unit, type }: HealthGau
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.span
-            className="text-lg font-bold font-mono tabular-nums leading-none"
-            style={{ color }}
-            key={value}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-          >
-            {animatedValue}
-          </motion.span>
+          <span className="text-lg font-bold font-mono tabular-nums leading-none" style={{ color }}>
+            <AnimatedCounter
+              value={value}
+              decimals={type === 'rul' ? 0 : type === 'thrust' ? 0 : 1}
+              format={type === 'rul' ? (v) => Math.round(v).toString() : undefined}
+            />
+          </span>
           <motion.span
             className="text-[7px] text-gray-500 font-mono mt-1 tracking-wider"
             initial={{ opacity: 0 }}

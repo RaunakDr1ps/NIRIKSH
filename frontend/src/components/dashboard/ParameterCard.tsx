@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { formatNumber } from '@/utils/format';
+import AnimatedCounter from '@/components/common/AnimatedCounter';
 import type { LucideIcon } from 'lucide-react';
 
 interface ParameterCardProps {
@@ -11,18 +11,22 @@ interface ParameterCardProps {
   decimals?: number;
 }
 
-export default function ParameterCard({ label, value, unit, icon: Icon, format: fmt, decimals = 2 }: ParameterCardProps) {
-  const displayValue =
-    fmt === 'rpm'
-      ? `${(value / 1000).toFixed(1)}k`
-      : fmt === 'fuel'
-      ? value.toFixed(4)
-      : fmt === 'temp'
-      ? `${value.toFixed(0)}`
-      : fmt === 'pressure'
-      ? `${(value / 1e3).toFixed(1)}k`
-      : formatNumber(value, decimals);
+function getFormatFn(fmt?: string) {
+  switch (fmt) {
+    case 'rpm':
+      return (v: number) => `${(v / 1000).toFixed(1)}k`;
+    case 'fuel':
+      return (v: number) => v.toFixed(4);
+    case 'temp':
+      return (v: number) => `${v.toFixed(0)}`;
+    case 'pressure':
+      return (v: number) => `${(v / 1e3).toFixed(1)}k`;
+    default:
+      return undefined;
+  }
+}
 
+export default function ParameterCard({ label, value, unit, icon: Icon, format: fmt }: ParameterCardProps) {
   return (
     <motion.div
       className="glass-panel p-3 card-border-glow"
@@ -36,7 +40,11 @@ export default function ParameterCard({ label, value, unit, icon: Icon, format: 
         <span className="text-[10px] text-gray-500 uppercase tracking-[0.1em] font-medium">{label}</span>
       </div>
       <p className="text-lg font-bold font-mono tabular-nums text-white ml-9">
-        {displayValue}
+        <AnimatedCounter
+          value={value}
+          format={getFormatFn(fmt)}
+          decimals={fmt === 'fuel' ? 4 : fmt === 'temp' ? 0 : 2}
+        />
       </p>
       <p className="text-[10px] text-gray-600 font-mono ml-9">{unit}</p>
     </motion.div>

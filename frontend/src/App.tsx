@@ -52,7 +52,7 @@ export default function App() {
             <main className="flex-1 overflow-y-auto relative">
               {/* Ambient layers */}
               <div className="grid-overlay-subtle absolute inset-0 pointer-events-none" />
-              <ParticleField count={25} />
+              <ParticleField count={10} />
               <div className="scan-line-slow absolute inset-0 pointer-events-none z-[1]" />
               <div className="grain-overlay absolute inset-0 pointer-events-none z-[1]" />
               {/* Vignette effect */}

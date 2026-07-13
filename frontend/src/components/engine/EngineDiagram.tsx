@@ -26,18 +26,18 @@ function getHealthColor(value: number): string {
 }
 
 export default function EngineDiagram({ health }: EngineDiagramProps) {
-  if (!health) return null;
-
-  const sections: SectionConfig[] = useMemo(
-    () => [
+  const sections: SectionConfig[] = useMemo(() => {
+    if (!health) return [];
+    return [
       { id: 'intake', label: 'INTAKE', healthValue: 1, x: 2, width: 14, color: INTRAKE_COLOR },
       { id: 'compressor', label: 'COMPRESSOR', healthValue: health.compressorHealth, x: 18, width: 22, color: getHealthColor(health.compressorHealth) },
       { id: 'combustor', label: 'COMBUSTOR', healthValue: health.combustorHealth, x: 42, width: 16, color: getHealthColor(health.combustorHealth) },
       { id: 'turbine', label: 'TURBINE', healthValue: health.turbineHealth, x: 60, width: 20, color: getHealthColor(health.turbineHealth) },
       { id: 'exhaust', label: 'EXHAUST', healthValue: 1, x: 82, width: 16, color: EXHAUST_COLOR },
-    ],
-    [health],
-  );
+    ];
+  }, [health]);
+
+  if (!health) return null;
 
   const isCombustorCritical = health.combustorHealth < 0.4;
 
@@ -65,15 +65,13 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
               <stop offset="50%" stopColor="#233150" />
               <stop offset="100%" stopColor="#1a2540" />
             </linearGradient>
-            {sections.map((s) => (
-              <filter key={`glow-${s.id}`} id={`glow-${s.id}`}>
-                <feGaussianBlur stdDeviation={s.id === 'combustor' ? '2' : '1'} result="blur" />
+              <filter id="glow-svg">
+                <feGaussianBlur stdDeviation="1" />
                 <feMerge>
-                  <feMergeNode in="blur" />
+                  <feMergeNode />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
-            ))}
           </defs>
 
           {/* Engine Body */}
@@ -90,7 +88,7 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
                   fill={`${s.color}15`}
                   stroke={s.color}
                   strokeWidth="0.5"
-                  style={{ filter: `url(#glow-${s.id})` }}
+                  style={{ filter: `url(#glow-svg)` }}
                 />
               ) : (
                 <motion.rect
@@ -102,7 +100,7 @@ export default function EngineDiagram({ health }: EngineDiagramProps) {
                   fill={`${s.color}15`}
                   stroke={s.color}
                   strokeWidth="0.5"
-                  style={{ filter: `url(#glow-${s.id})` }}
+                  style={{ filter: `url(#glow-svg)` }}
                   animate={{
                     strokeOpacity: s.healthValue < 0.6 ? [0.6, 1, 0.6] : 1,
                   }}
