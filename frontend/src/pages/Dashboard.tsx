@@ -3,13 +3,14 @@ import { useDashboardContext } from '@/context/DashboardContext';
 import StatusCard from '@/components/common/StatusCard';
 import HealthGauge from '@/components/common/HealthGauge';
 import EngineDiagram from '@/components/engine/EngineDiagram';
-import TrendChart from '@/components/charts/TrendChart';
+import DegradationForecast from '@/components/charts/DegradationForecast';
 import WarningPanel from '@/components/dashboard/WarningPanel';
 import PredictionPanel from '@/components/dashboard/PredictionPanel';
 import ParameterCard from '@/components/dashboard/ParameterCard';
 import UploadButton from '@/components/dashboard/UploadButton';
 import LoadingSkeleton from '@/components/common/LoadingSkeleton';
-import { Activity, Gauge, Thermometer, Wind, Fuel, Compass } from 'lucide-react';
+import AlarmBanner from '@/components/common/AlarmBanner';
+import { Activity, Gauge, Thermometer, Wind, Fuel, Compass, Cpu } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -72,7 +73,21 @@ export default function Dashboard() {
             Real-time engine health monitoring
           </p>
         </div>
-        <UploadButton />
+        <div className="flex items-center gap-3">
+          <div className="glass-panel px-3 py-2 flex items-center gap-2">
+            <Cpu className="w-4 h-4 text-hud-blue" />
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full" style={{
+                backgroundColor: health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040',
+                boxShadow: `0 0 6px ${health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040'}80`,
+              }} />
+              <span className="text-xs font-mono tabular-nums text-white">
+                {(health.overallHealth * 100).toFixed(0)}%
+              </span>
+            </div>
+          </div>
+          <UploadButton />
+        </div>
       </motion.div>
 
       {/* Top Row: Status Cards */}
@@ -135,18 +150,33 @@ export default function Dashboard() {
       {/* Bottom Row: Charts + Warnings */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          <TrendChart
-            data={degradationTrends}
-            title="Degradation Trends"
-            lines={[
-              { dataKey: 'compressorHealth', color: '#00d4ff', name: 'Compressor' },
-              { dataKey: 'combustorHealth', color: '#ffb300', name: 'Combustor' },
-              { dataKey: 'turbineHealth', color: '#ff6a00', name: 'Turbine' },
-              { dataKey: 'overallHealth', color: '#00ff88', name: 'Overall' },
-            ]}
+          <DegradationForecast
+            trends={degradationTrends}
+            currentHealth={health.overallHealth}
           />
         </div>
         <div className="space-y-4">
+          <AlarmBanner
+            severity={
+              health.overallHealth >= 0.8
+                ? 'normal'
+                : health.overallHealth >= 0.6
+                ? 'warning'
+                : 'critical'
+            }
+            message={
+              health.overallHealth >= 0.8
+                ? 'All systems nominal'
+                : health.overallHealth >= 0.6
+                ? `Engine health declining — ${(health.overallHealth * 100).toFixed(1)}% remaining`
+                : `Critical engine degradation — immediate action required (${(health.overallHealth * 100).toFixed(1)}%)`
+            }
+            details={
+              health.overallHealth >= 0.8
+                ? undefined
+                : `Compressor: ${(health.compressorHealth * 100).toFixed(1)}% | Combustor: ${(health.combustorHealth * 100).toFixed(1)}% | Turbine: ${(health.turbineHealth * 100).toFixed(1)}%`
+            }
+          />
           <WarningPanel warnings={warnings} />
           <PredictionPanel
             thrust={prediction.thrust_N}
@@ -169,13 +199,7 @@ function ErrorState({ message }: { message: string }) {
     >
       <div className="glass-panel p-8 text-center max-w-md">
         <div className="w-12 h-12 rounded-full bg-hud-red/10 border border-hud-red/30 flex items-center justify-center mx-auto mb-4">
-          <motion.span
-            className="text-hud-red text-xl"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            !
-          </motion.span>
+          <span className="text-hud-red text-xl font-bold">!</span>
         </div>
         <h3 className="text-hud-red font-mono text-sm mb-2">SYSTEM ERROR</h3>
         <p className="text-gray-400 text-sm">{message}</p>

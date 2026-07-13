@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, AlertCircle, Info } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Info, AlertOctagon } from 'lucide-react';
 import type { Warning } from '@/types/engine';
 
 interface WarningPanelProps {
@@ -7,7 +7,7 @@ interface WarningPanelProps {
 }
 
 const iconMap = {
-  critical: AlertTriangle,
+  critical: AlertOctagon,
   warning: AlertCircle,
   info: Info,
 };
@@ -63,37 +63,63 @@ export default function WarningPanel({ warnings }: WarningPanelProps) {
                   key={w.id}
                   layout
                   initial={{ opacity: 0, x: -16, scale: 0.96 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    borderColor: w.type === 'critical'
+                      ? ['rgba(255,0,64,0.4)', 'rgba(255,0,64,0.15)', 'rgba(255,0,64,0.4)']
+                      : undefined,
+                  }}
                   exit={{ opacity: 0, x: 16, scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className={`flex items-start gap-2 p-2.5 rounded-lg border ${
+                  transition={{
+                    type: 'spring', stiffness: 300, damping: 25,
+                    borderColor: w.type === 'critical' ? { duration: 1.5, repeat: Infinity } : undefined,
+                  }}
+                  className={`flex items-start gap-2 p-2.5 rounded-lg border relative overflow-hidden ${
                     w.type === 'critical'
-                      ? 'bg-hud-red/5 border-hud-red/20'
+                      ? 'bg-hud-red/5 border-hud-red/30 shadow-[0_0_12px_rgba(255,0,64,0.08)]'
                       : w.type === 'warning'
                       ? 'bg-hud-amber/5 border-hud-amber/20'
                       : 'bg-hud-blue/5 border-hud-blue/20'
                   }`}
                 >
-                  <Icon
-                    className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${
-                      w.type === 'critical'
-                        ? 'text-hud-red'
-                        : w.type === 'warning'
-                        ? 'text-hud-amber'
-                        : 'text-hud-blue'
-                    }`}
-                  />
-              <div className="flex-1 min-w-0">
+                  {/* Critical scan line */}
+                  {w.type === 'critical' && (
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none"
+                      animate={{ opacity: [0, 0.04, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      style={{
+                        background: 'linear-gradient(180deg, transparent, rgba(255,0,64,0.08), transparent)',
+                      }}
+                    />
+                  )}
+                  <motion.div
+                    animate={w.type === 'critical' ? { rotate: [0, 8, -8, 0] } : {}}
+                    transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    <Icon
+                      className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${
+                        w.type === 'critical'
+                          ? 'text-hud-red'
+                          : w.type === 'warning'
+                          ? 'text-hud-amber'
+                          : 'text-hud-blue'
+                      }`}
+                    />
+                  </motion.div>
+              <div className="flex-1 min-w-0 relative z-10">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <motion.span
                     className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
                       w.type === 'critical' ? 'bg-hud-red' : w.type === 'warning' ? 'bg-hud-amber' : 'bg-hud-blue'
                     }`}
-                    animate={w.type === 'critical' ? { scale: [1, 1.3, 1] } : {}}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    animate={w.type === 'critical' ? { scale: [1, 1.5, 1] } : w.type === 'warning' ? { scale: [1, 1.2, 1] } : {}}
+                    transition={{ duration: w.type === 'critical' ? 0.8 : 1.5, repeat: Infinity }}
                     style={{
                       boxShadow: w.type === 'critical'
-                        ? '0 0 6px rgba(255, 0, 64, 0.6)'
+                        ? '0 0 10px rgba(255, 0, 64, 0.8)'
                         : w.type === 'warning'
                         ? '0 0 6px rgba(255, 179, 0, 0.4)'
                         : '0 0 6px rgba(0, 212, 255, 0.4)',
