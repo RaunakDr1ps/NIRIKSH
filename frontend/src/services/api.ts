@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { DashboardData, EngineTelemetry, EnginePrediction, EngineHealth } from '@/types/engine';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://niriksh.onrender.com/api',
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
 });
