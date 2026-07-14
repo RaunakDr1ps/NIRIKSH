@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 
-export type IntroPhase = 'pending' | 'playing' | 'transitioning' | 'complete';
+export type IntroPhase = 'idle' | 'intro' | 'complete';
 
 interface AnimationContextValue {
   phase: IntroPhase;
-  advance: () => void;
+  start: () => void;
+  complete: () => void;
   ready: boolean;
 }
 
@@ -12,43 +13,44 @@ const AnimationContext = createContext<AnimationContextValue | null>(null);
 
 const SESSION_KEY = 'niriksh-intro-played';
 
+function hasPlayedBefore(): boolean {
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function markPlayed(): void {
+  try {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+  } catch {
+    /* noop */
+  }
+}
+
 export function AnimationProvider({ children }: { children: ReactNode }) {
-  const [phase, setPhase] = useState<IntroPhase>('pending');
-  const initiated = useRef(false);
+  const [phase, setPhase] = useState<IntroPhase>(() =>
+    hasPlayedBefore() ? 'complete' : 'idle',
+  );
 
+  const start = useCallback(() => setPhase('intro'), []);
+  const complete = useCallback(() => {
+    setPhase('complete');
+    markPlayed();
+  }, []);
+
+  // Auto-advance: idle → intro after 80ms
   useEffect(() => {
-    const alreadyPlayed =
-      typeof sessionStorage !== 'undefined' &&
-      sessionStorage.getItem(SESSION_KEY) === 'true';
-
-    if (alreadyPlayed) {
-      setPhase('complete');
-      return;
-    }
-
-    if (initiated.current) return;
-    initiated.current = true;
-
-    const timer = setTimeout(() => setPhase('playing'), 80);
+    if (phase !== 'idle') return;
+    const timer = setTimeout(start, 80);
     return () => clearTimeout(timer);
-  }, []);
+  }, [phase, start]);
 
-  const advance = useCallback(() => {
-    setPhase('transitioning');
-    setTimeout(() => {
-      setPhase('complete');
-      try {
-        sessionStorage.setItem(SESSION_KEY, 'true');
-      } catch {
-        /* noop */
-      }
-    }, 800);
-  }, []);
-
-  const ready = phase === 'transitioning' || phase === 'complete';
+  const ready = phase === 'complete';
 
   return (
-    <AnimationContext.Provider value={{ phase, advance, ready }}>
+    <AnimationContext.Provider value={{ phase, start, complete, ready }}>
       {children}
     </AnimationContext.Provider>
   );
