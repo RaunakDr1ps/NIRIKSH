@@ -2,6 +2,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DashboardProvider } from '@/context/DashboardContext';
 import { ToastProvider } from '@/context/ToastContext';
+import { AnimationProvider, useAnimationContext } from '@/components/intro/AnimationContext';
+import IntroAnimation from '@/components/intro/IntroAnimation';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import StatusBar from '@/components/layout/StatusBar';
@@ -41,34 +43,56 @@ function AnimatedRoutes() {
   );
 }
 
+function AppContent() {
+  const { ready } = useAnimationContext();
+
+  return (
+    <motion.div
+      className="h-screen flex flex-col bg-surface-900"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{
+        opacity: ready ? 1 : 0,
+        y: ready ? 0 : 12,
+      }}
+      transition={{
+        duration: 0.7,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
+    >
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto relative">
+          {/* Ambient layers */}
+          <div className="grid-overlay-subtle absolute inset-0 pointer-events-none" />
+          <ParticleField count={10} />
+          <div className="scan-line-slow absolute inset-0 pointer-events-none z-[1]" />
+          <div className="grain-overlay absolute inset-0 pointer-events-none z-[1]" />
+          {/* Vignette effect */}
+          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
+            background: 'radial-gradient(ellipse at center, transparent 60%, rgba(10, 14, 23, 0.4) 100%)'
+          }} />
+          {/* Content */}
+          <div className="relative z-10 p-6">
+            <AnimatedRoutes />
+          </div>
+        </main>
+      </div>
+      <StatusBar />
+    </motion.div>
+  );
+}
+
 export default function App() {
   return (
-    <ToastProvider>
-      <DashboardProvider>
-        <div className="h-screen flex flex-col bg-surface-900">
-          <Header />
-          <div className="flex flex-1 overflow-hidden">
-            <Sidebar />
-            <main className="flex-1 overflow-y-auto relative">
-              {/* Ambient layers */}
-              <div className="grid-overlay-subtle absolute inset-0 pointer-events-none" />
-              <ParticleField count={10} />
-              <div className="scan-line-slow absolute inset-0 pointer-events-none z-[1]" />
-              <div className="grain-overlay absolute inset-0 pointer-events-none z-[1]" />
-              {/* Vignette effect */}
-              <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-                background: 'radial-gradient(ellipse at center, transparent 60%, rgba(10, 14, 23, 0.4) 100%)'
-              }} />
-              {/* Content */}
-              <div className="relative z-10 p-6">
-                <AnimatedRoutes />
-              </div>
-            </main>
-          </div>
-          <StatusBar />
-        </div>
-        <ToastContainer />
-      </DashboardProvider>
-    </ToastProvider>
+    <AnimationProvider>
+      <ToastProvider>
+        <DashboardProvider>
+          <AppContent />
+          <IntroAnimation />
+          <ToastContainer />
+        </DashboardProvider>
+      </ToastProvider>
+    </AnimationProvider>
   );
 }

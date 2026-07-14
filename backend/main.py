@@ -28,7 +28,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://niriksh-five.vercel.app"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://niriksh-five.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
