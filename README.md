@@ -278,5 +278,5 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ## Contributors
 
-- **Raunak** — *Lead Developer* — [GitHub](https://github.com/raunak)
+- **Raunak** — *Lead Developer* — [GitHub](https://github.com/RaunakDr1ps)
 - **Pranav** — *Lead Developer* — [GitHub](https://github.com/Pranavgit12)
