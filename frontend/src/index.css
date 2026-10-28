@@ -14,196 +14,111 @@
   }
 
   body {
-    @apply bg-surface-900 text-gray-100;
+    @apply bg-[#0a0d14] text-gray-100;
     min-height: 100vh;
     overflow-x: hidden;
+    font-feature-settings: "tnum";
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-surface-800;
+    @apply bg-[#050608];
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-surface-500 rounded-full;
+    @apply bg-slate-700;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-hud-blue/50;
+    @apply bg-slate-600;
   }
 }
 
 @layer components {
-  .glass-panel {
-    @apply bg-surface-800/60 backdrop-blur-md border border-surface-600/50 rounded-xl;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.2);
+  .panel {
+    @apply bg-[#0a0d14] border border-slate-800/80 rounded-none;
   }
 
-  .glass-panel-hover {
-    @apply glass-panel transition-all duration-300 hover:border-hud-blue/30 hover:shadow-lg hover:shadow-hud-blue/5;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.2);
+  .panel-compact {
+    @apply bg-[#0a0d14] border border-slate-800/80 rounded-none p-3;
   }
 
-  .glass-panel-premium {
-    @apply glass-panel transition-all duration-500 hover:border-hud-blue/20 hover:shadow-xl hover:shadow-hud-blue/[0.04] hover:bg-surface-800/70;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.2);
+  .panel-dense {
+    @apply bg-[#0a0d14] border border-slate-800/80 rounded-none p-2;
   }
 
   .hud-text {
-    @apply font-mono text-hud-blue;
+    @apply font-mono text-cyan-400;
   }
 
   .hud-cyan {
-    @apply font-mono text-hud-cyan;
+    @apply font-mono text-cyan-400;
   }
 
   .hud-green {
-    @apply font-mono text-hud-green;
+    @apply font-mono text-emerald-400;
   }
 
   .hud-amber {
-    @apply font-mono text-hud-amber;
+    @apply font-mono text-amber-400;
   }
 
   .hud-orange {
-    @apply font-mono text-hud-orange;
+    @apply font-mono text-orange-400;
   }
 
   .hud-red {
-    @apply font-mono text-hud-red;
+    @apply font-mono text-red-500;
   }
 
   .status-dot {
-    @apply w-2 h-2 rounded-full inline-block;
+    @apply w-1.5 h-1.5 rounded-none inline-block;
   }
 
   .status-dot-green {
-    @apply status-dot bg-hud-green shadow-[0_0_8px_rgba(0,255,136,0.6)];
+    @apply status-dot bg-emerald-400;
   }
 
   .status-dot-yellow {
-    @apply status-dot bg-hud-amber shadow-[0_0_8px_rgba(255,179,0,0.6)];
+    @apply status-dot bg-amber-400;
   }
 
   .status-dot-orange {
-    @apply status-dot bg-hud-orange shadow-[0_0_8px_rgba(255,106,0,0.6)];
+    @apply status-dot bg-orange-400;
   }
 
   .status-dot-red {
-    @apply status-dot bg-hud-red shadow-[0_0_8px_rgba(255,0,64,0.6)];
+    @apply status-dot bg-red-500;
   }
 
-  .scan-line {
-    @apply absolute inset-0 overflow-hidden pointer-events-none;
+  .tech-header {
+    @apply text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2;
   }
 
-  .scan-line::after {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-b from-transparent via-hud-blue/5 to-transparent;
-    animation: scan 2s linear infinite;
+  .tech-label {
+    @apply text-[9px] font-mono text-gray-500 uppercase tracking-wider;
   }
 
-  .scan-line-slow {
-    @apply absolute inset-0 overflow-hidden pointer-events-none;
-  }
-
-  .scan-line-slow::after {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-b from-transparent via-hud-blue/[0.03] to-transparent;
-    animation: scan 6s linear infinite;
-  }
-
-  .grid-overlay {
-    background-image:
-      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .grid-overlay-subtle {
-    background-image:
-      linear-gradient(rgba(0, 212, 255, 0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 212, 255, 0.015) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  .grain-overlay {
-    position: relative;
-  }
-
-  .grain-overlay::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 128px 128px;
-    opacity: 0.03;
-    pointer-events: none;
-    mix-blend-mode: overlay;
+  .data-value {
+    @apply font-mono tabular-nums;
   }
 
   .skeleton-pulse {
-    @apply relative overflow-hidden;
-    background: linear-gradient(
-      90deg,
-      rgba(15, 21, 36, 0.6) 25%,
-      rgba(26, 37, 64, 0.4) 50%,
-      rgba(15, 21, 36, 0.6) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-  }
-
-  .card-border-glow {
-    @apply relative;
-  }
-
-  .card-border-glow::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    background: linear-gradient(
-      135deg,
-      rgba(0, 212, 255, 0.06),
-      transparent 35%,
-      transparent 65%,
-      rgba(0, 255, 136, 0.03)
-    );
-    pointer-events: none;
-    z-index: -1;
-    transition: opacity 0.4s ease;
-  }
-
-  .glass-panel-hover:hover .card-border-glow::after,
-  .glass-panel-premium:hover .card-border-glow::after {
-    opacity: 0.6;
+    @apply relative overflow-hidden bg-slate-900/60;
+    animation: pulse 1.5s ease-in-out infinite;
   }
 
   .focus-ring {
-    @apply outline-none ring-2 ring-hud-blue/50 ring-offset-2 ring-offset-surface-900 transition-all duration-200;
+    @apply outline-none ring-1 ring-cyan-500/40 ring-offset-0 transition-all duration-150;
   }
 }
 
 @layer utilities {
-  .text-shadow-glow {
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
-  }
-
-  .text-shadow-green {
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-  }
-
-  .text-shadow-amber {
-    text-shadow: 0 0 10px rgba(255, 179, 0, 0.5);
-  }
-
-  .text-shadow-red {
-    text-shadow: 0 0 10px rgba(255, 0, 64, 0.5);
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }

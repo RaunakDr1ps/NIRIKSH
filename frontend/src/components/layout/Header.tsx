@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Activity, Bell, Download, Settings } from 'lucide-react';
 
 export default function Header() {
@@ -11,87 +10,53 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-surface-600/50 bg-surface-900/95 backdrop-blur-md flex items-center justify-between px-6 z-50">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Activity className="w-7 h-7 text-hud-blue" />
-            <motion.span
-              className="absolute -top-1 -right-1 w-2 h-2 bg-hud-green rounded-full"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          </div>
+    <header className="h-12 border-b border-slate-800/80 bg-[#0a0d14] flex items-center justify-between px-4 z-50">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-cyan-400" />
           <div>
-            <h1 className="text-lg font-bold text-white tracking-wider">
-              <span className="text-hud-blue">NIRIKSH</span>
-              <span className="text-xs ml-2 text-gray-500 font-normal">v2.1.0</span>
+            <h1 className="text-xs font-mono font-bold text-gray-200 tracking-[0.2em]">
+              NIRIKSH
             </h1>
-            <p className="text-[10px] text-gray-500 tracking-widest uppercase">
-              Engine Health Monitoring System
+            <p className="text-[8px] text-gray-600 tracking-[0.15em] uppercase">
+              ENGINE_HEALTH_MONITOR
             </p>
           </div>
         </div>
-        <motion.div
-          className="hidden md:flex items-center gap-2 ml-8 px-4 py-1.5 bg-surface-800/80 rounded-full border border-surface-600/50"
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <motion.span
-            className="w-1.5 h-1.5 rounded-full bg-hud-green"
-            style={{ boxShadow: '0 0 6px rgba(0,255,136,0.6)' }}
-            animate={{ opacity: [1, 0.5, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-          <span className="text-xs text-hud-green font-mono">SYSTEM ONLINE</span>
-        </motion.div>
+        <div className="hidden md:flex items-center gap-1.5 ml-4 px-2 py-0.5 border border-emerald-900/40 bg-emerald-950/10">
+          <span className="w-1.5 h-1.5 bg-emerald-400" />
+          <span className="text-[8px] text-emerald-400 font-mono uppercase tracking-wider">SYS_ONLINE</span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="text-right mr-2">
-          <p className="text-xs text-gray-400 font-mono">
-            {time.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+      <div className="flex items-center gap-3">
+        <div className="text-right">
+          <p className="text-[8px] text-gray-600 font-mono">
+            {time.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-')}
           </p>
-          <motion.p
-            className="text-sm text-hud-blue font-mono tracking-wider tabular-nums"
-            key={time.getHours() + ':' + time.getMinutes()}
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: 1 }}
-          >
+          <p className="text-[10px] text-cyan-400 font-mono tracking-wider tabular-nums">
             {time.toLocaleTimeString('en-US', { hour12: false })}
-          </motion.p>
+          </p>
         </div>
 
-        <motion.button
-          className="relative p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <button
+          className="p-1 border border-slate-800/80 text-gray-600 hover:text-gray-400 hover:bg-slate-900/40"
           aria-label="Notifications"
         >
-          <Bell className="w-4 h-4 text-gray-400" />
-          <motion.span
-            className="absolute top-1 right-1 w-2 h-2 bg-hud-orange rounded-full"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </motion.button>
-        <motion.button
-          className="p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          <Bell className="w-3.5 h-3.5" />
+        </button>
+        <button
+          className="p-1 border border-slate-800/80 text-gray-600 hover:text-gray-400 hover:bg-slate-900/40"
           aria-label="Download data"
         >
-          <Download className="w-4 h-4 text-gray-400" />
-        </motion.button>
-        <motion.button
-          className="p-2 rounded-lg hover:bg-surface-700 transition-colors focus-ring"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          <Download className="w-3.5 h-3.5" />
+        </button>
+        <button
+          className="p-1 border border-slate-800/80 text-gray-600 hover:text-gray-400 hover:bg-slate-900/40"
           aria-label="Settings"
         >
-          <Settings className="w-4 h-4 text-gray-400" />
-        </motion.button>
+          <Settings className="w-3.5 h-3.5" />
+        </button>
       </div>
     </header>
   );

@@ -8,7 +8,6 @@ import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 import StatusBar from '@/components/layout/StatusBar';
 import ToastContainer from '@/components/common/ToastContainer';
-import ParticleField from '@/components/common/ParticleField';
 import Dashboard from '@/pages/Dashboard';
 import HealthMonitor from '@/pages/HealthMonitor';
 import EngineView from '@/pages/EngineView';
@@ -48,32 +47,20 @@ function AppContent() {
 
   return (
     <motion.div
-      className="h-screen flex flex-col bg-surface-900"
-      initial={{ opacity: 0, y: 12 }}
+      className="h-screen flex flex-col bg-[#0a0d14]"
+      initial={{ opacity: 0 }}
       animate={{
         opacity: ready ? 1 : 0,
-        y: ready ? 0 : 12,
       }}
       transition={{
-        duration: 0.7,
-        ease: [0.25, 0.1, 0.25, 1],
+        duration: 0.4,
       }}
     >
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto relative">
-          {/* Ambient layers */}
-          <div className="grid-overlay-subtle absolute inset-0 pointer-events-none" />
-          <ParticleField count={10} />
-          <div className="scan-line-slow absolute inset-0 pointer-events-none z-[1]" />
-          <div className="grain-overlay absolute inset-0 pointer-events-none z-[1]" />
-          {/* Vignette effect */}
-          <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-            background: 'radial-gradient(ellipse at center, transparent 60%, rgba(10, 14, 23, 0.4) 100%)'
-          }} />
-          {/* Content */}
-          <div className="relative z-10 p-6">
+        <main className="flex-1 overflow-y-auto relative bg-[#0a0d14]">
+          <div className="relative p-3">
             <AnimatedRoutes />
           </div>
         </main>

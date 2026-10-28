@@ -46,102 +46,73 @@ export default function Predictions() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-4"
     >
-      <motion.div variants={itemVariants} className="flex items-center gap-3">
-        <Brain className="w-6 h-6 text-hud-blue" />
+      <motion.div variants={itemVariants} className="flex items-center gap-2">
+        <Brain className="w-4 h-4 text-cyan-400" />
         <div>
-          <h1 className="text-2xl font-bold text-white">Predictions</h1>
-          <p className="text-[10px] text-gray-600 font-mono">ML INFERENCE ENGINE</p>
+          <h1 className="text-sm font-mono text-gray-200 uppercase tracking-[0.25em]">PREDICTIONS</h1>
+          <p className="text-[9px] text-gray-600 font-mono uppercase tracking-wider">ML_INFERENCE</p>
         </div>
       </motion.div>
 
       {/* Prediction Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="glass-panel-hover p-6 text-center card-border-glow"
-          whileHover={{ y: -4 }}
+          className="panel p-3 text-center"
         >
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <TrendingUp className="w-8 h-8 text-hud-amber mx-auto mb-3" />
-          </motion.div>
-          <p className="text-xs text-gray-500 uppercase tracking-[0.15em] mb-1">Predicted Thrust</p>
-          <p className="text-3xl font-bold font-mono tabular-nums text-white">{formatThrust(prediction.thrust_N)}</p>
-          <p className="text-[10px] text-gray-600 mt-1">At current operating conditions</p>
+          <TrendingUp className="w-4 h-4 text-amber-400 mx-auto mb-1.5" />
+          <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mb-1 font-mono">THRUST_PRED</p>
+          <p className="text-xl font-bold font-mono tabular-nums text-gray-200">{formatThrust(prediction.thrust_N)}</p>
+          <p className="text-[8px] text-gray-600 mt-0.5 font-mono">AT_OP_COND</p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="glass-panel-hover p-6 text-center card-border-glow"
-          whileHover={{ y: -4 }}
+          className="panel p-3 text-center"
         >
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          >
-            <Target className="w-8 h-8 text-hud-cyan mx-auto mb-3" />
-          </motion.div>
-          <p className="text-xs text-gray-500 uppercase tracking-[0.15em] mb-1">Predicted TSFC</p>
-          <p className="text-3xl font-bold font-mono tabular-nums text-white">{formatTSFC(prediction.tsfc_g_N_s)}</p>
-          <p className="text-[10px] text-gray-600 mt-1">Specific fuel consumption</p>
+          <Target className="w-4 h-4 text-cyan-400 mx-auto mb-1.5" />
+          <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mb-1 font-mono">TSFC_PRED</p>
+          <p className="text-xl font-bold font-mono tabular-nums text-gray-200">{formatTSFC(prediction.tsfc_g_N_s)}</p>
+          <p className="text-[8px] text-gray-600 mt-0.5 font-mono">FUEL_CONS</p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="glass-panel-hover p-6 text-center card-border-glow"
-          whileHover={{ y: -4 }}
+          className="panel p-3 text-center"
         >
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          >
-            <BarChart3 className="w-8 h-8 text-hud-green mx-auto mb-3" />
-          </motion.div>
-          <p className="text-xs text-gray-500 uppercase tracking-[0.15em] mb-1">Confidence</p>
-          <p className="text-3xl font-bold font-mono tabular-nums" style={{ color: '#00ff88' }}>{formatPercentage(prediction.confidence)}</p>
-          <p className="text-[10px] text-gray-600 mt-1">Model prediction confidence</p>
+          <BarChart3 className="w-4 h-4 text-emerald-400 mx-auto mb-1.5" />
+          <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mb-1 font-mono">CONFIDENCE</p>
+          <p className="text-xl font-bold font-mono tabular-nums text-emerald-400">{formatPercentage(prediction.confidence)}</p>
+          <p className="text-[8px] text-gray-600 mt-0.5 font-mono">MODEL_CERTAINTY</p>
         </motion.div>
       </motion.div>
 
       {/* Model Info */}
-      <motion.div variants={itemVariants} className="glass-panel p-6 card-border-glow">
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Model Information</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <InfoItem label="Model" value={modelInfo.name} />
-          <InfoItem label="Version" value={modelInfo.version} />
-          <InfoItem label="Accuracy" value={formatPercentage(modelInfo.accuracy)} color="#00ff88" />
-          <InfoItem label="Precision" value={formatPercentage(modelInfo.precision)} color="#00d4ff" />
-          <InfoItem label="Recall" value={formatPercentage(modelInfo.recall)} color="#ffb300" />
-          <InfoItem label="F1 Score" value={formatPercentage(modelInfo.f1Score)} color="#00ffb9" />
-          <InfoItem label="Last Trained" value={modelInfo.lastTrained} />
-          <InfoItem label="Features" value={`${modelInfo.features.length} inputs`} />
+      <motion.div variants={itemVariants} className="panel p-2">
+        <h3 className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.2em] mb-2">MODEL_INFO</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
+          <InfoItem label="MODEL" value={modelInfo.name} />
+          <InfoItem label="VER" value={modelInfo.version} />
+          <InfoItem label="ACC" value={formatPercentage(modelInfo.accuracy)} color="#34d399" />
+          <InfoItem label="PREC" value={formatPercentage(modelInfo.precision)} color="#22d3ee" />
+          <InfoItem label="REC" value={formatPercentage(modelInfo.recall)} color="#fbbf24" />
+          <InfoItem label="F1" value={formatPercentage(modelInfo.f1Score)} color="#22d3ee" />
+          <InfoItem label="TRAINED" value={modelInfo.lastTrained} />
+          <InfoItem label="FEAT" value={`${modelInfo.features.length}`} />
         </div>
       </motion.div>
 
       {/* Feature List */}
-      <motion.div variants={itemVariants} className="glass-panel p-6 card-border-glow">
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Feature Engineering</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      <motion.div variants={itemVariants} className="panel p-2">
+        <h3 className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.2em] mb-2">FEATURE_SET</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
           {modelInfo.features.map((f) => (
-            <motion.div
+            <div
               key={f}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-700/50 border border-surface-600/30"
-              whileHover={{ borderColor: 'rgba(0, 212, 255, 0.4)', backgroundColor: 'rgba(0, 212, 255, 0.05)' }}
-              transition={{ duration: 0.2 }}
+              className="flex items-center gap-1.5 px-2 py-1 border border-slate-800/80"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-hud-blue/60" />
-              <span className="text-xs font-mono text-gray-400">{f}</span>
-            </motion.div>
+              <span className="w-1 h-1 bg-cyan-400" />
+              <span className="text-[9px] font-mono text-gray-400">{f}</span>
+            </div>
           ))}
         </div>
       </motion.div>
@@ -159,13 +130,11 @@ function InfoItem({
   color?: string;
 }) {
   return (
-    <motion.div
-      className="glass-panel p-3 card-border-glow"
-      whileHover={{ y: -1, borderColor: 'rgba(0, 212, 255, 0.2)' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    <div
+      className="panel-dense"
     >
-      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-sm font-mono font-bold tabular-nums" style={{ color: color ?? '#e5e7eb' }}>{value}</p>
-    </motion.div>
+      <p className="text-[8px] text-gray-600 uppercase tracking-wider font-mono mb-0.5">{label}</p>
+      <p className="text-[11px] font-mono font-bold tabular-nums" style={{ color: color ?? '#d1d5db' }}>{value}</p>
+    </div>
   );
 }

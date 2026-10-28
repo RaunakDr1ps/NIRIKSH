@@ -4,7 +4,7 @@ import { useDashboardContext } from '@/context/DashboardContext';
 import StatusCard from '@/components/common/StatusCard';
 import TrendChart from '@/components/charts/TrendChart';
 import LoadingSkeleton from '@/components/common/LoadingSkeleton';
-import { getHealthStatus } from '@/utils/format';
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -42,70 +42,70 @@ export default function HealthMonitor() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-4"
     >
-      <motion.div variants={itemVariants} className="flex items-center gap-3">
-        <Activity className="w-6 h-6 text-hud-blue" />
+      <motion.div variants={itemVariants} className="flex items-center gap-2">
+        <Activity className="w-4 h-4 text-cyan-400" />
         <div>
-          <h1 className="text-2xl font-bold text-white">Health Monitor</h1>
-          <p className="text-[10px] text-gray-600 font-mono">DEGRADATION TRACKING</p>
+          <h1 className="text-sm font-mono text-gray-200 uppercase tracking-[0.25em]">HEALTH_MONITOR</h1>
+          <p className="text-[9px] text-gray-600 font-mono uppercase tracking-wider">DEGRADATION_TRACKING</p>
         </div>
       </motion.div>
 
       {/* Health Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatusCard title="Compressor" value={health.compressorHealth} type="health" status={healthValue(health.compressorHealth)} />
-        <StatusCard title="Combustor" value={health.combustorHealth} type="health" status={healthValue(health.combustorHealth)} />
-        <StatusCard title="Turbine" value={health.turbineHealth} type="health" status={healthValue(health.turbineHealth)} />
-        <StatusCard title="Overall Health" value={health.overallHealth} type="health" status={healthValue(health.overallHealth)} large />
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        <StatusCard title="COMPRESSOR" value={health.compressorHealth} type="health" status={healthValue(health.compressorHealth)} />
+        <StatusCard title="COMBUSTOR" value={health.combustorHealth} type="health" status={healthValue(health.combustorHealth)} />
+        <StatusCard title="TURBINE" value={health.turbineHealth} type="health" status={healthValue(health.turbineHealth)} />
+        <StatusCard title="OVERALL" value={health.overallHealth} type="health" status={healthValue(health.overallHealth)} large />
       </motion.div>
 
       {/* Degradation Chart */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-2">
         <div className="lg:col-span-2">
           <TrendChart
             data={degradationTrends}
-            title="Component Degradation Over Cycles"
+            title="COMPONENT_DEGRADATION_VS_CYCLE"
             lines={[
-              { dataKey: 'compressorHealth', color: '#00d4ff', name: 'Compressor' },
-              { dataKey: 'combustorHealth', color: '#ffb300', name: 'Combustor' },
-              { dataKey: 'turbineHealth', color: '#ff6a00', name: 'Turbine' },
-              { dataKey: 'overallHealth', color: '#00ff88', name: 'Overall' },
+              { dataKey: 'compressorHealth', color: '#22d3ee', name: 'COMPRESSOR' },
+              { dataKey: 'combustorHealth', color: '#fbbf24', name: 'COMBUSTOR' },
+              { dataKey: 'turbineHealth', color: '#fb923c', name: 'TURBINE' },
+              { dataKey: 'overallHealth', color: '#34d399', name: 'OVERALL' },
             ]}
           />
         </div>
 
         {/* Health Summary */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-0.5 h-3 bg-hud-blue/60 rounded-full" />
-            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Component Details</span>
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-2 bg-cyan-400" />
+            <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-mono">COMPONENT_DETAIL</span>
           </div>
           <HealthSummaryCard
-            title="Compressor Status"
+            title="COMPRESSOR"
             value={health.compressorHealth}
             icon={Activity}
             details={[
-              { label: 'Pressure Ratio Efficiency', value: `${(health.compressorHealth * 0.95 * 100).toFixed(0)}%` },
-              { label: 'Blade Condition', value: health.compressorHealth > 0.7 ? 'Good' : 'Degraded' },
+              { label: 'PR_EFF', value: `${(health.compressorHealth * 0.95 * 100).toFixed(0)}%` },
+              { label: 'BLADE', value: health.compressorHealth > 0.7 ? 'OK' : 'DEG' },
             ]}
           />
           <HealthSummaryCard
-            title="Combustor Status"
+            title="COMBUSTOR"
             value={health.combustorHealth}
             icon={AlertTriangle}
             details={[
-              { label: 'Burner Efficiency', value: `${(health.combustorHealth * 0.92 * 100).toFixed(0)}%` },
-              { label: 'Flame Stability', value: health.combustorHealth > 0.6 ? 'Stable' : 'Unstable' },
+              { label: 'BURN_EFF', value: `${(health.combustorHealth * 0.92 * 100).toFixed(0)}%` },
+              { label: 'FLAME', value: health.combustorHealth > 0.6 ? 'STAB' : 'UNSTAB' },
             ]}
           />
           <HealthSummaryCard
-            title="Turbine Status"
+            title="TURBINE"
             value={health.turbineHealth}
             icon={TrendingDown}
             details={[
-              { label: 'Expansion Efficiency', value: `${(health.turbineHealth * 0.90 * 100).toFixed(0)}%` },
-              { label: 'Thermal Stress', value: health.turbineHealth > 0.6 ? 'Nominal' : 'Elevated' },
+              { label: 'EXP_EFF', value: `${(health.turbineHealth * 0.90 * 100).toFixed(0)}%` },
+              { label: 'THERM', value: health.turbineHealth > 0.6 ? 'NOM' : 'ELEV' },
             ]}
           />
         </div>
@@ -125,33 +125,33 @@ function HealthSummaryCard({
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   details: { label: string; value: string }[];
 }) {
-  const { label, color } = getHealthStatus(value);
+  const barColor =
+    value >= 0.8 ? '#34d399' : value >= 0.6 ? '#fbbf24' : value >= 0.4 ? '#fb923c' : '#ef4444';
+  const statusLabel = value >= 0.8 ? 'NOM' : value >= 0.6 ? 'DEG' : value >= 0.4 ? 'WRN' : 'CRIT';
 
   return (
     <motion.div
-      className="glass-panel p-4 card-border-glow"
-      whileHover={{ y: -2 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="panel p-2"
     >
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-4 h-4" style={{ color }} />
-        <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{title}</span>
-        <span className="ml-auto text-[10px] font-mono" style={{ color }}>{label}</span>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <Icon className="w-3 h-3" style={{ color: barColor }} />
+        <span className="text-[9px] font-mono text-gray-400 uppercase tracking-[0.15em]">{title}</span>
+        <span className="ml-auto text-[8px] font-mono" style={{ color: barColor }}>{statusLabel}</span>
       </div>
-      <div className="h-2 bg-surface-700/80 rounded-full mb-3 overflow-hidden">
+      <div className="h-1 bg-slate-900 mb-1.5 overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value * 100}%` }}
-          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-          className="h-full rounded-full"
-          style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}40` }}
+          transition={{ duration: 0.6, ease: 'linear' }}
+          className="h-full"
+          style={{ backgroundColor: barColor }}
         />
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-0.5">
         {details.map((d) => (
-          <div key={d.label} className="flex justify-between text-xs">
-            <span className="text-gray-500">{d.label}</span>
-            <span className="text-gray-300 font-mono tabular-nums">{d.value}</span>
+          <div key={d.label} className="flex justify-between">
+            <span className="text-[8px] text-gray-600 font-mono uppercase">{d.label}</span>
+            <span className="text-[9px] text-gray-300 font-mono tabular-nums">{d.value}</span>
           </div>
         ))}
       </div>

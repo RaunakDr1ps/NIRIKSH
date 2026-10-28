@@ -53,101 +53,85 @@ export default function Maintenance() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-4"
     >
-      <motion.div variants={itemVariants} className="flex items-center gap-3">
-        <Wrench className="w-6 h-6 text-hud-blue" />
+      <motion.div variants={itemVariants} className="flex items-center gap-2">
+        <Wrench className="w-4 h-4 text-cyan-400" />
         <div>
-          <h1 className="text-2xl font-bold text-white">Maintenance</h1>
-          <p className="text-[10px] text-gray-600 font-mono">PREDICTIVE MAINTENANCE</p>
+          <h1 className="text-sm font-mono text-gray-200 uppercase tracking-[0.25em]">MAINTENANCE</h1>
+          <p className="text-[9px] text-gray-600 font-mono uppercase tracking-wider">PREDICTIVE_MAINTENANCE</p>
         </div>
       </motion.div>
 
       {/* Health Status */}
-      <motion.div variants={itemVariants} className="glass-panel p-6 card-border-glow">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-0.5 h-4 rounded-full" style={{ backgroundColor: statusColor, boxShadow: `0 0 6px ${statusColor}60` }} />
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-widest">Engine Health Overview</h3>
+      <motion.div variants={itemVariants} className="panel p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-3" style={{ backgroundColor: statusColor }} />
+            <h3 className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.2em]">ENGINE_HEALTH</h3>
           </div>
-          <div className="flex items-center gap-3">
-            <motion.span
-              className="text-sm font-mono font-bold tabular-nums"
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[11px] font-mono font-bold tabular-nums"
               style={{ color: statusColor }}
-              key={overallHealth}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
             >
               {(overallHealth * 100).toFixed(1)}%
-            </motion.span>
-            <motion.span
-              className="text-[10px] font-mono font-semibold"
+            </span>
+            <span
+              className="text-[9px] font-mono uppercase tracking-wider"
               style={{ color: statusColor }}
-              key={overallHealth >= 0.8 ? 'healthy' : overallHealth >= 0.6 ? 'attention' : overallHealth >= 0.4 ? 'warning' : 'critical'}
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
             >
-              {overallHealth >= 0.8 ? 'HEALTHY' : overallHealth >= 0.6 ? 'ATTENTION' : overallHealth >= 0.4 ? 'WARNING' : 'CRITICAL'}
-            </motion.span>
+              {overallHealth >= 0.8 ? 'NOMINAL' : overallHealth >= 0.6 ? 'DEGRADED' : overallHealth >= 0.4 ? 'WARNING' : 'CRITICAL'}
+            </span>
           </div>
         </div>
-        <div className="h-3 bg-surface-700/80 rounded-full overflow-hidden">
+        <div className="h-1 bg-slate-900 overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${overallHealth * 100}%` }}
-            transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="h-full rounded-full"
-            style={{ backgroundColor: statusColor, boxShadow: `0 0 12px ${statusColor}60` }}
+            transition={{ duration: 0.8, ease: 'linear' }}
+            className="h-full"
+            style={{ backgroundColor: statusColor }}
           />
-        </div>
-        <div className="flex justify-between mt-2 text-[10px] font-mono">
-          <span className="text-gray-600">0%</span>
-          <span className="text-gray-600">50%</span>
-          <span className="text-gray-600">100%</span>
         </div>
       </motion.div>
 
       {/* Recommendations */}
-      <motion.div variants={itemVariants} className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-hud-blue" />
-          Maintenance Recommendations
+      <motion.div variants={itemVariants} className="space-y-1.5">
+        <h3 className="text-[10px] font-mono text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1.5">
+          <Calendar className="w-3 h-3 text-cyan-400" />
+          MAINTENANCE_TASKS
         </h3>
         {recommendations.map((rec) => (
           <motion.div
             key={rec.component}
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className={`glass-panel p-4 border-l-2 card-border-glow ${
+            className={`panel p-2 border-l ${
               rec.priority === 'critical'
-                ? 'border-l-hud-red'
+                ? 'border-l-red-500'
                 : rec.priority === 'high'
-                ? 'border-l-hud-orange'
-                : 'border-l-hud-green'
+                ? 'border-l-amber-400'
+                : 'border-l-emerald-400'
             }`}
-            whileHover={{ x: 4 }}
           >
             <div className="flex items-start justify-between">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2">
                 {rec.priority === 'critical' ? (
-                  <AlertTriangle className="w-5 h-5 text-hud-red mt-0.5" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-red-500 mt-0.5" />
                 ) : rec.priority === 'high' ? (
-                  <Clock className="w-5 h-5 text-hud-orange mt-0.5" />
+                  <Clock className="w-3.5 h-3.5 text-amber-400 mt-0.5" />
                 ) : (
-                  <CheckCircle className="w-5 h-5 text-hud-green mt-0.5" />
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mt-0.5" />
                 )}
                 <div>
-                  <h4 className="text-sm font-semibold text-white">{rec.component}</h4>
-                  <p className="text-xs text-gray-400 mt-0.5">{rec.action}</p>
+                  <h4 className="text-[11px] font-mono text-gray-200 uppercase">{rec.component}</h4>
+                  <p className="text-[10px] text-gray-400 mt-0.5">{rec.action}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs font-mono font-semibold" style={{ color: rec.priority === 'critical' ? '#ff0040' : rec.priority === 'high' ? '#ff6a00' : '#00ff88' }}>
-                  {rec.priority.toUpperCase()}
+                <p className="text-[9px] font-mono uppercase" style={{ color: rec.priority === 'critical' ? '#ef4444' : rec.priority === 'high' ? '#fbbf24' : '#34d399' }}>
+                  {rec.priority}
                 </p>
-                <p className="text-[10px] text-gray-500 font-mono mt-0.5">Due: {rec.due}</p>
+                <p className="text-[8px] text-gray-600 font-mono mt-0.5">DUE:{rec.due}</p>
               </div>
             </div>
           </motion.div>

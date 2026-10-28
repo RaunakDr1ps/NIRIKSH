@@ -29,24 +29,20 @@ function getFormatFn(fmt?: string) {
 export default function ParameterCard({ label, value, unit, icon: Icon, format: fmt }: ParameterCardProps) {
   return (
     <motion.div
-      className="glass-panel p-3 card-border-glow"
-      whileHover={{ y: -2, borderColor: 'rgba(0, 212, 255, 0.3)' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="panel-dense"
     >
-      <div className="flex items-center gap-2 mb-2">
-        <span className="w-7 h-7 rounded-md bg-hud-blue/8 flex items-center justify-center flex-shrink-0">
-          <Icon className="w-3.5 h-3.5 text-hud-blue/70" />
-        </span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-[0.1em] font-medium">{label}</span>
+      <div className="flex items-center gap-1.5 mb-0.5">
+        <Icon className="w-2.5 h-2.5 text-cyan-400/70" />
+        <span className="text-[8px] text-gray-500 uppercase tracking-[0.15em] font-mono">{label}</span>
       </div>
-      <p className="text-lg font-bold font-mono tabular-nums text-white ml-9">
+      <p className="text-sm font-bold font-mono tabular-nums text-gray-200">
         <AnimatedCounter
           value={value}
           format={getFormatFn(fmt)}
           decimals={fmt === 'fuel' ? 4 : fmt === 'temp' ? 0 : 2}
         />
       </p>
-      <p className="text-[10px] text-gray-600 font-mono ml-9">{unit}</p>
+      <p className="text-[8px] text-gray-600 font-mono">{unit}</p>
     </motion.div>
   );
 }

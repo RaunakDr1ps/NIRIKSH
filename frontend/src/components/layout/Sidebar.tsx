@@ -28,89 +28,74 @@ export default function Sidebar() {
 
   return (
     <motion.aside
-      className="relative bg-surface-900/95 backdrop-blur-md border-r border-surface-600/50 flex flex-col"
-      animate={{ width: collapsed ? 64 : 224 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      className="relative bg-[#0a0d14] border-r border-slate-800/80 flex flex-col"
+      animate={{ width: collapsed ? 56 : 200 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className="flex-1 flex flex-col gap-1 p-2 pt-4">
+      <div className="flex-1 flex flex-col gap-0.5 p-1 pt-2">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             title={collapsed ? item.label : undefined}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group border border-transparent relative"
+            className="flex items-center gap-2 px-2 py-1.5 border border-transparent relative"
           >
             {({ isActive }: { isActive: boolean }) => (
-              <motion.div layout className="flex items-center gap-3 overflow-hidden w-full">
+              <div className="flex items-center gap-2 overflow-hidden w-full">
                 {isActive && (
-                  <motion.div
-                    layoutId="sidebar-active"
-                    className="absolute -left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-hud-blue rounded-full"
-                    style={{ boxShadow: '0 0 6px rgba(0,212,255,0.4)' }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-3 bg-cyan-400" />
                 )}
                 <div
-                  className={`flex items-center gap-3 w-full px-3 py-2.5 -mx-3 -my-2.5 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center gap-2 w-full px-2 py-1.5 -mx-2 -my-1.5 ${
                     isActive
-                      ? 'bg-hud-blue/10 text-hud-blue shadow-[0_0_10px_rgba(0,212,255,0.05)] border border-hud-blue/20'
-                      : 'text-gray-400 hover:bg-surface-800 hover:text-gray-200'
+                      ? 'bg-cyan-950/20 text-cyan-400 border border-cyan-900/40'
+                      : 'text-gray-500 hover:bg-slate-900/40 hover:text-gray-300'
                   }`}
                 >
-                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="text-sm font-medium whitespace-nowrap"
+                        transition={{ duration: 0.1 }}
+                        className="text-[10px] font-mono uppercase tracking-wider whitespace-nowrap"
                       >
                         {item.label}
                       </motion.span>
                     )}
                   </AnimatePresence>
                 </div>
-              </motion.div>
+              </div>
             )}
           </NavLink>
         ))}
       </div>
 
-      <motion.button
+      <button
         onClick={() => setCollapsed(!collapsed)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="m-2 p-2 rounded-lg hover:bg-surface-800 text-gray-500 hover:text-gray-300 transition-colors self-end"
+        className="m-1 p-1 border border-slate-800/80 text-gray-600 hover:text-gray-400 hover:bg-slate-900/40 self-end"
       >
-        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </motion.button>
+        {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+      </button>
 
-      <div className="p-3 border-t border-surface-600/50">
-        <motion.div
-          className="flex items-center gap-2"
-          animate={{ justifyContent: collapsed ? 'center' : 'flex-start' }}
-        >
-          <motion.span
-            className="w-1.5 h-1.5 rounded-full bg-hud-green flex-shrink-0"
-            style={{ boxShadow: '0 0 6px rgba(0,255,136,0.6)' }}
-            animate={{ opacity: [1, 0.5, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
+      <div className="p-2 border-t border-slate-800/80">
+        <div className="flex items-center gap-1.5" style={{ justifyContent: collapsed ? 'center' : 'flex-start' }}>
+          <span className="w-1.5 h-1.5 bg-emerald-400 flex-shrink-0" />
           <AnimatePresence>
             {!collapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-[10px] text-gray-500 font-mono tracking-wider whitespace-nowrap"
+                className="text-[8px] text-gray-600 font-mono uppercase tracking-wider whitespace-nowrap"
               >
-                API: CONNECTED
+                LINK:OK
               </motion.span>
             )}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
     </motion.aside>
   );
