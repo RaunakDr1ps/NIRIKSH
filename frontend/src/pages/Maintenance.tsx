@@ -70,15 +70,27 @@ export default function Maintenance() {
             <div className="w-0.5 h-4 rounded-full" style={{ backgroundColor: statusColor, boxShadow: `0 0 6px ${statusColor}60` }} />
             <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-widest">Engine Health Overview</h3>
           </div>
-          <motion.span
-            className="text-[10px] font-mono font-semibold"
-            style={{ color: statusColor }}
-            key={overallHealth >= 0.8 ? 'healthy' : overallHealth >= 0.6 ? 'attention' : overallHealth >= 0.4 ? 'warning' : 'critical'}
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {overallHealth >= 0.8 ? 'HEALTHY' : overallHealth >= 0.6 ? 'ATTENTION' : overallHealth >= 0.4 ? 'WARNING' : 'CRITICAL'}
-          </motion.span>
+          <div className="flex items-center gap-3">
+            <motion.span
+              className="text-sm font-mono font-bold tabular-nums"
+              style={{ color: statusColor }}
+              key={overallHealth}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {(overallHealth * 100).toFixed(1)}%
+            </motion.span>
+            <motion.span
+              className="text-[10px] font-mono font-semibold"
+              style={{ color: statusColor }}
+              key={overallHealth >= 0.8 ? 'healthy' : overallHealth >= 0.6 ? 'attention' : overallHealth >= 0.4 ? 'warning' : 'critical'}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {overallHealth >= 0.8 ? 'HEALTHY' : overallHealth >= 0.6 ? 'ATTENTION' : overallHealth >= 0.4 ? 'WARNING' : 'CRITICAL'}
+            </motion.span>
+          </div>
         </div>
         <div className="h-3 bg-surface-700/80 rounded-full overflow-hidden">
           <motion.div
