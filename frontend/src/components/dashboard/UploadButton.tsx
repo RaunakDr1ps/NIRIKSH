@@ -31,7 +31,7 @@ export default function UploadButton() {
     try {
       const result = await uploadDataset(file, (p) => setProgress(p));
       addToast(`Dataset loaded: ${result.rows} rows`, 'success');
-      refetch();
+      await refetch();
     } catch {
       addToast('Upload failed. Please try again.', 'error');
     } finally {

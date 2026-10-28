@@ -30,13 +30,11 @@ export function DashboardProvider({ children, pollIntervalMs = 5000 }: { childre
       if (!controller.signal.aborted) {
         setData(result);
         setError(null);
+        setLoading(false);
       }
     } catch (err) {
       if (!controller.signal.aborted) {
         setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');
-      }
-    } finally {
-      if (!controller.signal.aborted) {
         setLoading(false);
       }
     }

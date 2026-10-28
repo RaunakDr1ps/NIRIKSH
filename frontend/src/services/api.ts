@@ -1,8 +1,18 @@
 import axios from 'axios';
 import type { DashboardData, EngineTelemetry, EnginePrediction, EngineHealth } from '@/types/engine';
 
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (import.meta.env.DEV) {
+    return 'http://localhost:8000/api';
+  }
+  return 'https://niriksh.onrender.com/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://niriksh.onrender.com/api',
+  baseURL: getBaseURL(),
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
 });
