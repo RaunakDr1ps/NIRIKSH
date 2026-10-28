@@ -32,6 +32,10 @@ class EngineService:
         self.current_index: int = 0
         self.inference: ModelInference = get_inference()
 
+    @property
+    def has_dataset(self) -> bool:
+        return self.data is not None and not self.data.empty
+
     async def initialize(self):
         pass
 

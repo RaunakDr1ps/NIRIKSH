@@ -69,6 +69,7 @@ class DashboardData(BaseModel):
     degradationTrends: List[DegradationTrend]
     warnings: List[Warning]
     modelInfo: ModelInfo
+    datasetLoaded: bool = False
 
 
 class PredictRequest(BaseModel):

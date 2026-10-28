@@ -55,6 +55,7 @@ export interface DashboardData {
   degradationTrends: DegradationTrend[];
   warnings: Warning[];
   modelInfo: ModelInfo;
+  datasetLoaded: boolean;
 }
 
 export interface DegradationTrend {

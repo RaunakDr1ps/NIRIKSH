@@ -10,7 +10,7 @@ import ParameterCard from '@/components/dashboard/ParameterCard';
 import UploadButton from '@/components/dashboard/UploadButton';
 import LoadingSkeleton from '@/components/common/LoadingSkeleton';
 import AlarmBanner from '@/components/common/AlarmBanner';
-import { Activity, Gauge, Thermometer, Wind, Fuel, Compass, Cpu } from 'lucide-react';
+import { Activity, Gauge, Thermometer, Wind, Fuel, Compass, Cpu, Upload, AlertCircle } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
   if (!data) return null;
 
-  const { telemetry, health, prediction, warnings, degradationTrends, modelInfo } = data;
+  const { telemetry, health, prediction, warnings, degradationTrends, modelInfo, datasetLoaded } = data;
 
   const params = [
     { label: 'RPM', value: telemetry.rpm_rev_min, unit: 'rev/min', icon: Gauge, format: 'rpm' },
@@ -78,11 +78,15 @@ export default function Dashboard() {
             <Cpu className="w-4 h-4 text-hud-blue" />
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full" style={{
-                backgroundColor: health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040',
-                boxShadow: `0 0 6px ${health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040'}80`,
+                backgroundColor: datasetLoaded
+                  ? (health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040')
+                  : '#666666',
+                boxShadow: datasetLoaded
+                  ? `0 0 6px ${health.overallHealth >= 0.8 ? '#00ff88' : health.overallHealth >= 0.6 ? '#ffb300' : health.overallHealth >= 0.4 ? '#ff6a00' : '#ff0040'}80`
+                  : 'none',
               }} />
               <span className="text-xs font-mono tabular-nums text-white">
-                {(health.overallHealth * 100).toFixed(0)}%
+                {datasetLoaded ? `${(health.overallHealth * 100).toFixed(0)}%` : 'N/A'}
               </span>
             </div>
           </div>
@@ -90,31 +94,56 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {!datasetLoaded && (
+        <motion.div variants={itemVariants}>
+          <div className="glass-panel p-6 border border-hud-blue/40 bg-hud-blue/5 card-border-glow">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-hud-blue/10 border border-hud-blue/40 flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="w-6 h-6 text-hud-blue" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-1">No Dataset Loaded</h3>
+                <p className="text-sm text-gray-400 mb-2">
+                  Upload a telemetry CSV file using the "Upload Dataset" button above to begin analyzing engine health, performance predictions, and degradation trends.
+                </p>
+                <p className="text-xs text-gray-500 font-mono">
+                  Expected columns: EngineID, Cycle, Altitude_m, Mach, Tamb_K, Pamb_Pa, RPM_rev_min, FuelFlow_kg_s, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-hud-blue">
+                <Upload className="w-5 h-5" />
+                <span className="text-sm font-mono">Awaiting Upload</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Top Row: Status Cards */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard
           title="Compressor"
-          value={health.compressorHealth}
+          value={datasetLoaded ? health.compressorHealth : 0}
           type="health"
-          status={health.compressorHealth >= 0.8 ? 'healthy' : health.compressorHealth >= 0.6 ? 'attention' : health.compressorHealth >= 0.4 ? 'warning' : 'critical'}
+          status={datasetLoaded ? (health.compressorHealth >= 0.8 ? 'healthy' : health.compressorHealth >= 0.6 ? 'attention' : health.compressorHealth >= 0.4 ? 'warning' : 'critical') : 'attention'}
         />
         <StatusCard
           title="Combustor"
-          value={health.combustorHealth}
+          value={datasetLoaded ? health.combustorHealth : 0}
           type="health"
-          status={health.combustorHealth >= 0.8 ? 'healthy' : health.combustorHealth >= 0.6 ? 'attention' : health.combustorHealth >= 0.4 ? 'warning' : 'critical'}
+          status={datasetLoaded ? (health.combustorHealth >= 0.8 ? 'healthy' : health.combustorHealth >= 0.6 ? 'attention' : health.combustorHealth >= 0.4 ? 'warning' : 'critical') : 'attention'}
         />
         <StatusCard
           title="Turbine"
-          value={health.turbineHealth}
+          value={datasetLoaded ? health.turbineHealth : 0}
           type="health"
-          status={health.turbineHealth >= 0.8 ? 'healthy' : health.turbineHealth >= 0.6 ? 'attention' : health.turbineHealth >= 0.4 ? 'warning' : 'critical'}
+          status={datasetLoaded ? (health.turbineHealth >= 0.8 ? 'healthy' : health.turbineHealth >= 0.6 ? 'attention' : health.turbineHealth >= 0.4 ? 'warning' : 'critical') : 'attention'}
         />
         <StatusCard
           title="Overall Health"
-          value={health.overallHealth}
+          value={datasetLoaded ? health.overallHealth : 0}
           type="health"
-          status={health.overallHealth >= 0.8 ? 'healthy' : health.overallHealth >= 0.6 ? 'attention' : health.overallHealth >= 0.4 ? 'warning' : 'critical'}
+          status={datasetLoaded ? (health.overallHealth >= 0.8 ? 'healthy' : health.overallHealth >= 0.6 ? 'attention' : health.overallHealth >= 0.4 ? 'warning' : 'critical') : 'attention'}
           large
         />
       </motion.div>
@@ -122,13 +151,13 @@ export default function Dashboard() {
       {/* Middle Row: Engine Diagram + Gauges */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <EngineDiagram health={health} />
+          <EngineDiagram health={datasetLoaded ? health : { compressorHealth: 0, combustorHealth: 0, turbineHealth: 0, overallHealth: 0 }} />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <HealthGauge label="Thrust" value={prediction.thrust_N} max={50000} unit="N" type="thrust" />
-          <HealthGauge label="TSFC" value={prediction.tsfc_g_N_s} max={50} unit="g/kN·s" type="tsfc" />
-          <HealthGauge label="Confidence" value={modelInfo.accuracy * 100} max={100} unit="%" type="confidence" />
-          <HealthGauge label="RUL" value={health.overallHealth * 100} max={100} unit="%" type="rul" />
+          <HealthGauge label="Thrust" value={datasetLoaded ? prediction.thrust_N : 0} max={50000} unit="N" type="thrust" />
+          <HealthGauge label="TSFC" value={datasetLoaded ? prediction.tsfc_g_N_s : 0} max={50} unit="g/kN·s" type="tsfc" />
+          <HealthGauge label="Confidence" value={datasetLoaded ? modelInfo.accuracy * 100 : 0} max={100} unit="%" type="confidence" />
+          <HealthGauge label="RUL" value={datasetLoaded ? health.overallHealth * 100 : 0} max={100} unit="%" type="rul" />
         </div>
       </motion.div>
 
@@ -139,49 +168,82 @@ export default function Dashboard() {
           <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-widest">
             Live Engine Parameters
           </h3>
+          {!datasetLoaded && (
+            <span className="ml-auto text-[10px] font-mono text-gray-500 uppercase tracking-wider">
+              No Data
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {params.map((p) => (
-            <ParameterCard key={p.label} {...p} />
-          ))}
+          {datasetLoaded ? (
+            params.map((p) => (
+              <ParameterCard key={p.label} {...p} />
+            ))
+          ) : (
+            params.map((p) => (
+              <div key={p.label} className="glass-panel p-3 border border-surface-600/30 opacity-40">
+                <div className="flex items-center gap-2 mb-1">
+                  <p.icon className="w-3 h-3 text-gray-500" />
+                  <span className="text-[9px] uppercase tracking-wider text-gray-500">{p.label}</span>
+                </div>
+                <div className="text-lg font-mono text-gray-600">--</div>
+                <div className="text-[9px] text-gray-600">{p.unit}</div>
+              </div>
+            ))
+          )}
         </div>
       </motion.div>
 
       {/* Bottom Row: Charts + Warnings */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          <DegradationForecast
-            trends={degradationTrends}
-            currentHealth={health.overallHealth}
-          />
+          {datasetLoaded ? (
+            <DegradationForecast
+              trends={degradationTrends}
+              currentHealth={health.overallHealth}
+            />
+          ) : (
+            <div className="glass-panel p-6 h-[300px] flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-sm text-gray-400 mb-1">Degradation Trends</p>
+                <p className="text-xs text-gray-600 font-mono">Upload dataset to view trends</p>
+              </div>
+            </div>
+          )}
         </div>
         <div className="space-y-4">
           <AlarmBanner
             severity={
-              health.overallHealth >= 0.8
-                ? 'normal'
-                : health.overallHealth >= 0.6
-                ? 'warning'
-                : 'critical'
+              datasetLoaded
+                ? health.overallHealth >= 0.8
+                  ? 'normal'
+                  : health.overallHealth >= 0.6
+                  ? 'warning'
+                  : 'critical'
+                : 'normal'
             }
             message={
-              health.overallHealth >= 0.8
-                ? 'All systems nominal'
-                : health.overallHealth >= 0.6
-                ? `Engine health declining — ${(health.overallHealth * 100).toFixed(1)}% remaining`
-                : `Critical engine degradation — immediate action required (${(health.overallHealth * 100).toFixed(1)}%)`
+              datasetLoaded
+                ? health.overallHealth >= 0.8
+                  ? 'All systems nominal'
+                  : health.overallHealth >= 0.6
+                  ? `Engine health declining — ${(health.overallHealth * 100).toFixed(1)}% remaining`
+                  : `Critical engine degradation — immediate action required (${(health.overallHealth * 100).toFixed(1)}%)`
+                : 'No dataset loaded — awaiting telemetry upload'
             }
             details={
-              health.overallHealth >= 0.8
+              datasetLoaded && health.overallHealth < 0.8
+                ? `Compressor: ${(health.compressorHealth * 100).toFixed(1)}% | Combustor: ${(health.combustorHealth * 100).toFixed(1)}% | Turbine: ${(health.turbineHealth * 100).toFixed(1)}%`
+                : datasetLoaded
                 ? undefined
-                : `Compressor: ${(health.compressorHealth * 100).toFixed(1)}% | Combustor: ${(health.combustorHealth * 100).toFixed(1)}% | Turbine: ${(health.turbineHealth * 100).toFixed(1)}%`
+                : 'Upload a CSV file to enable monitoring and predictions'
             }
           />
-          <WarningPanel warnings={warnings} />
+          <WarningPanel warnings={datasetLoaded ? warnings : []} />
           <PredictionPanel
-            thrust={prediction.thrust_N}
-            tsfc={prediction.tsfc_g_N_s}
-            confidence={prediction.confidence}
+            thrust={datasetLoaded ? prediction.thrust_N : 0}
+            tsfc={datasetLoaded ? prediction.tsfc_g_N_s : 0}
+            confidence={datasetLoaded ? prediction.confidence : 0}
             modelInfo={modelInfo}
           />
         </div>

@@ -61,6 +61,7 @@ async def get_dashboard(
         degradationTrends=trends,
         warnings=warnings,
         modelInfo=model_info,
+        datasetLoaded=engine_service.has_dataset,
     )
 
 

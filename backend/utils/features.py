@@ -98,28 +98,42 @@ def create_features_v2(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.copy()
 
-    df["Pressure_Ratio"] = df["P3_Pa"] / df["P2_Pa"]
-    df["Temperature_Ratio"] = df["T3_K"] / df["T2_K"]
-    df["Turbine_Expansion_Ratio"] = df["P3_Pa"] / df["P4_Pa"]
+    # Safeguard denominators
+    p2 = df["P2_Pa"].replace(0, np.nan)
+    p4 = df["P4_Pa"].replace(0, np.nan)
+    t2 = df["T2_K"].replace(0, np.nan)
+    t2_safe = t2.replace(np.nan, 288.15)
+
+    df["Pressure_Ratio"] = df["P3_Pa"] / p2
+    df["Temperature_Ratio"] = df["T3_K"] / t2
+    df["Turbine_Expansion_Ratio"] = df["P3_Pa"] / p4
     df["Turbine_Temperature_Drop_K"] = df["T3_K"] - df["T4_K"]
     df["Combustor_Temp_Rise_K"] = df["T3_K"] - df["T2_K"]
 
-    df["Corrected_RPM"] = df["RPM_rev_min"] / np.sqrt(df["T2_K"] / 288.15)
+    df["Corrected_RPM"] = df["RPM_rev_min"] / np.sqrt(t2_safe / 288.15)
     df["Corrected_FuelFlow"] = (
         df["FuelFlow_kg_s"]
-        / (df["P2_Pa"] / 101325)
-        / np.sqrt(df["T2_K"] / 288.15)
+        / ((df["P2_Pa"] / 101325).replace(0, np.nan))
+        / np.sqrt(t2_safe / 288.15)
     )
 
     gamma_ratio = 0.286
-    ideal_work = df["Pressure_Ratio"] ** gamma_ratio - 1
-    actual_work = df["Temperature_Ratio"] - 1
+    pressure_ratio_safe = df["Pressure_Ratio"].replace([np.inf, -np.inf], np.nan).fillna(1.0)
+    temperature_ratio_safe = df["Temperature_Ratio"].replace([np.inf, -np.inf], np.nan).fillna(1.0)
+    ideal_work = pressure_ratio_safe ** gamma_ratio - 1
+    actual_work = temperature_ratio_safe - 1
+    actual_work = actual_work.replace(0, np.nan)
     df["Compressor_Efficiency_Proxy"] = ideal_work / actual_work
 
     df["RPM_squared"] = df["RPM_rev_min"] ** 2
-    df["TAS_Proxy"] = df["Mach"] * np.sqrt(df["Tamb_K"])
+    df["TAS_Proxy"] = df["Mach"] * np.sqrt(df["Tamb_K"].replace(0, np.nan).fillna(288.15))
     df["Cycle_Squared"] = df["Cycle"] ** 2
-    df["Log_Pressure_Ratio"] = np.log(df["Pressure_Ratio"])
+    log_pressure_ratio = pressure_ratio_safe.replace(0, np.nan)
+    df["Log_Pressure_Ratio"] = np.log(log_pressure_ratio)
+
+    # Clean up any remaining inf/nan
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df = df.fillna(0.0)
 
     return df
 
